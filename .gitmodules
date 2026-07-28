@@ -1,0 +1,15 @@
+[submodule "SlowFast"]
+	path = SlowFast
+	url = https://github.com/facebookresearch/SlowFast.git
+[submodule "mmaction2"]
+	path = mmaction2
+	url = https://github.com/open-mmlab/mmaction2
+[submodule "Video-Swin-Transformer"]
+	path = Video-Swin-Transformer
+	url = https://github.com/SwinTransformer/Video-Swin-Transformer
+[submodule "MotionBERT"]
+	path = MotionBERT
+	url = https://github.com/Walter0807/MotionBERT
+[submodule "hud-design"]
+	path = hud-design
+	url = https://github.com/abdshomad/hud-design.git
