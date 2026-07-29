@@ -1,125 +1,110 @@
-<aside class="hud-sidesheet" id="hud-right-sidesheet" style="width: 380px; flex-shrink: 0; background: rgba(13, 16, 21, 0.85); border-left: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; z-index: 10; overflow: hidden;"
-       hx-get="/hud/right-sidesheet" hx-trigger="every 500ms" hx-swap="outerHTML">
-    
-    <div style="padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.06);">
-        <h3 style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0; letter-spacing: 0.5px;">
-            📊 ANALISIS ERGONOMI REBA
-        </h3>
+{% if not workers_data %}
+<div style="text-align: center; color: rgba(255,255,255,0.25); font-size: 11px; padding: 40px 10px;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 8px; color: rgba(255,255,255,0.15);">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+    </svg>
+    <br>Tidak ada data pekerja terdeteksi di area kerja.
+</div>
+{% else %}
+
+<!-- Overall Status Panel -->
+{% set levels = [] %}
+{% for w in workers_data %}
+    {% set _ = levels.append(w.risk_level) %}
+{% endfor %}
+
+{% if 'BAHAYA' in levels %}
+    {% set overall_risk = 'BAHAYA' %}
+    {% set card_class = 'hud-badge--bahaya' %}
+    {% set border_color = '#ef4444' %}
+    {% set bg_color = 'rgba(239, 68, 68, 0.08)' %}
+    {% set reason_summary = 'Terdeteksi pelanggaran K3 kritis!' %}
+{% elif 'WASPADA' in levels %}
+    {% set overall_risk = 'WASPADA' %}
+    {% set card_class = 'hud-badge--waspada' %}
+    {% set border_color = '#eab308' %}
+    {% set bg_color = 'rgba(234, 179, 8, 0.08)' %}
+    {% set reason_summary = 'Pekerja memerlukan pengawasan.' %}
+{% else %}
+    {% set overall_risk = 'AMAN' %}
+    {% set card_class = 'hud-badge--aman' %}
+    {% set border_color = '#22c55e' %}
+    {% set bg_color = 'rgba(34, 197, 94, 0.08)' %}
+    {% set reason_summary = 'Seluruh aktivitas pengangkatan aman.' %}
+{% endif %}
+
+<div style="background: {{ bg_color }}; border: 1px solid {{ border_color }}4d; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 15px;">
+    <div class="hud-badge {{ card_class }}" style="font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; display: inline-block;">
+        {{ overall_risk }}
     </div>
+    <h4 style="margin: 8px 0 2px 0; font-size: 13px; font-weight: 700; color: #fff;">Status Risiko Keseluruhan</h4>
+    <p style="margin: 0; font-size: 11px; color: rgba(255,255,255,0.5);">{{ reason_summary }}</p>
+</div>
+
+<!-- Individual Worker Status Cards -->
+<h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; margin-bottom: 8px; letter-spacing: 0.5px;">
+    DAFTAR DETAIL PEKERJA
+</h4>
+
+{% for w in workers_data %}
+    {% set w_id = w.id %}
+    {% set w_risk = w.risk_level %}
+    {% set details = w.details %}
+    {% set reasons = w.reasons %}
     
-    <div style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px;">
-        {% if not workers_data %}
-        <div style="text-align: center; color: rgba(255,255,255,0.25); font-size: 11px; padding: 40px 10px;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 8px; color: rgba(255,255,255,0.15);">
-                <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
-            </svg>
-            <br>Tidak ada data pekerja terdeteksi di area kerja.
+    {% if w_risk == 'BAHAYA' %}
+        {% set item_border = '#ef4444' %}
+        {% set item_icon = '🔴' %}
+    {% elif w_risk == 'WASPADA' %}
+        {% set item_border = '#eab308' %}
+        {% set item_icon = '🟡' %}
+    {% else %}
+        {% set item_border = 'rgba(255,255,255,0.08)' %}
+        {% set item_icon = '🟢' %}
+    {% endif %}
+    
+    <div class="hud-sidesheet__panel" style="background: rgba(255,255,255,0.02); border: 1px solid {{ item_border }}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
+            <span style="font-size: 12px; font-weight: bold; color: #fff;">
+                {{ item_icon }} Pekerja #{{ w_id }}
+            </span>
+            <span class="hud-badge {% if w_risk == 'BAHAYA' %}hud-badge--bahaya{% elif w_risk == 'WASPADA' %}hud-badge--waspada{% else %}hud-badge--aman{% endif %}">
+                {{ w_risk }}
+            </span>
         </div>
-        {% else %}
         
-        <!-- Overall Status Panel -->
-        {% set levels = [] %}
-        {% for w in workers_data %}
-            {% set _ = levels.append(w.risk_level) %}
-        {% endfor %}
+        <!-- Joint Angle Parameters -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.7); line-height: 1.5;">
+            <div>📐 Torso (Punggung): <strong style="color: #fff;">{{ details.trunk_angle }}°</strong></div>
+            <div>🦵 Lutut (Knee): <strong style="color: #fff;">{{ details.knee_angle if details.knee_angle is not none else 'N/A' }}°</strong></div>
+            <div>🔄 Twisting (Pinggang): <strong style="color: #fff;">{{ details.twist_angle }}°</strong></div>
+            <div>📐 Kemiringan Bahu: <strong style="color: #fff;">{{ details.shoulder_tilt }}°</strong></div>
+            <div style="grid-column: span 2;">📦 Jarak Beban: <strong style="color: #fff;">{{ details.wrist_hip_dist_normalized }}x</strong> lebar bahu</div>
+        </div>
         
-        {% if 'BAHAYA' in levels %}
-            {% set overall_risk = 'BAHAYA' %}
-            {% set card_class = 'hud-badge--bahaya' %}
-            {% set border_color = '#ef4444' %}
-            {% set bg_color = 'rgba(239, 68, 68, 0.08)' %}
-            {% set reason_summary = 'Terdeteksi pelanggaran K3 kritis!' %}
-        {% elif 'WASPADA' in levels %}
-            {% set overall_risk = 'WASPADA' %}
-            {% set card_class = 'hud-badge--waspada' %}
-            {% set border_color = '#eab308' %}
-            {% set bg_color = 'rgba(234, 179, 8, 0.08)' %}
-            {% set reason_summary = 'Pekerja memerlukan pengawasan.' %}
-        {% else %}
-            {% set overall_risk = 'AMAN' %}
-            {% set card_class = 'hud-badge--aman' %}
-            {% set border_color = '#22c55e' %}
-            {% set bg_color = 'rgba(34, 197, 94, 0.08)' %}
-            {% set reason_summary = 'Seluruh aktivitas pengangkatan aman.' %}
+        <!-- Violations Reasons -->
+        {% if reasons %}
+        <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 8px; font-size: 10px;">
+            <strong style="color: #f87171; display: block; margin-bottom: 4px;">Pemicu Risiko:</strong>
+            <ul style="margin: 0; padding-left: 14px; color: #fca5a5;">
+                {% for r in reasons %}
+                <li>{{ r }}</li>
+                {% endfor %}
+            </ul>
+        </div>
         {% endif %}
         
-        <div style="background: {{ bg_color }}; border: 1px solid {{ border_color }}4d; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-            <div class="hud-badge {{ card_class }}" style="font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; display: inline-block;">
-                {{ overall_risk }}
-            </div>
-            <h4 style="margin: 8px 0 2px 0; font-size: 13px; font-weight: 700; color: #fff;">Status Risiko Keseluruhan</h4>
-            <p style="margin: 0; font-size: 11px; color: rgba(255,255,255,0.5);">{{ reason_summary }}</p>
-        </div>
-        
-        <!-- Individual Worker Status Cards -->
-        <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 10px; margin-bottom: -5px; letter-spacing: 0.5px;">
-            DAFTAR DETAIL PEKERJA
-        </h4>
-        
-        {% for w in workers_data %}
-            {% set w_id = w.id %}
-            {% set w_risk = w.risk_level %}
-            {% set details = w.details %}
-            {% set reasons = w.reasons %}
-            
+        <!-- Action recommendation -->
+        <div style="font-size: 9.5px; color: rgba(255,255,255,0.4); border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 6px;">
             {% if w_risk == 'BAHAYA' %}
-                {% set item_border = '#ef4444' %}
-                {% set item_icon = '🔴' %}
-                {% set panel_expanded = true %}
+            <span style="color: #fca5a5; font-weight: bold;">Rekomendasi K3:</span> Hentikan membungkuk. Pekerja wajib melakukan squat (menekuk lutut) untuk menyalurkan berat ke paha.
             {% elif w_risk == 'WASPADA' %}
-                {% set item_border = '#eab308' %}
-                {% set item_icon = '🟡' %}
-                {% set panel_expanded = true %}
+            <span style="color: #fef08a; font-weight: bold;">Rekomendasi K3:</span> Dekatkan beban ke perut dan dada untuk meminimalisir momen beban punggung.
             {% else %}
-                {% set item_border = 'rgba(255,255,255,0.08)' %}
-                {% set item_icon = '🟢' %}
-                {% set panel_expanded = false %}
+            <span style="color: #86efac; font-weight: bold;">Rekomendasi K3:</span> Pertahankan kelurusan tulang belakang yang netral.
             {% endif %}
-            
-            <div class="hud-sidesheet__panel" style="background: rgba(255,255,255,0.02); border: 1px solid {{ item_border }}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
-                    <span style="font-size: 12px; font-weight: bold; color: #fff;">
-                        {{ item_icon }} Pekerja #{{ w_id }}
-                    </span>
-                    <span class="hud-badge {% if w_risk == 'BAHAYA' %}hud-badge--bahaya{% elif w_risk == 'WASPADA' %}hud-badge--waspada{% else %}hud-badge--aman{% endif %}">
-                        {{ w_risk }}
-                    </span>
-                </div>
-                
-                <!-- Joint Angle Parameters -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.7); line-height: 1.5;">
-                    <div>📐 Torso (Punggung): <strong style="color: #fff;">{{ details.trunk_angle }}°</strong></div>
-                    <div>🦵 Lutut (Knee): <strong style="color: #fff;">{{ details.knee_angle if details.knee_angle is not none else 'N/A' }}°</strong></div>
-                    <div>🔄 Twisting (Pinggang): <strong style="color: #fff;">{{ details.twist_angle }}°</strong></div>
-                    <div>📐 Kemiringan Bahu: <strong style="color: #fff;">{{ details.shoulder_tilt }}°</strong></div>
-                    <div style="grid-column: span 2;">📦 Jarak Beban: <strong style="color: #fff;">{{ details.wrist_hip_dist_normalized }}x</strong> lebar bahu</div>
-                </div>
-                
-                <!-- Violations Reasons -->
-                {% if reasons %}
-                <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 8px; font-size: 10px;">
-                    <strong style="color: #f87171; display: block; margin-bottom: 4px;">Pemicu Risiko:</strong>
-                    <ul style="margin: 0; padding-left: 14px; color: #fca5a5;">
-                        {% for r in reasons %}
-                        <li>{{ r }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-                
-                <!-- Action recommendation -->
-                <div style="font-size: 9.5px; color: rgba(255,255,255,0.4); border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 6px;">
-                    {% if w_risk == 'BAHAYA' %}
-                    <span style="color: #fca5a5; font-weight: bold;">Rekomendasi K3:</span> Hentikan membungkuk. Pekerja wajib melakukan squat (menekuk lutut) untuk menyalurkan berat ke paha.
-                    {% elif w_risk == 'WASPADA' %}
-                    <span style="color: #fef08a; font-weight: bold;">Rekomendasi K3:</span> Dekatkan beban ke perut dan dada untuk meminimalisir momen beban punggung.
-                    {% else %}
-                    <span style="color: #86efac; font-weight: bold;">Rekomendasi K3:</span> Pertahankan kelurusan tulang belakang yang netral.
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-        
-        {% endif %}
+        </div>
     </div>
-</aside>
+{% endfor %}
+
+{% endif %}

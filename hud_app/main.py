@@ -213,11 +213,12 @@ async def get_index(request: Request):
         
     with state.lock:
         active_source = state.active_source
+        workers = state.workers_data.copy()
         
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"sources": sorted(sources), "active_source": active_source}
+        context={"sources": sorted(sources), "active_source": active_source, "workers_data": workers}
     )
 
 @app.get("/api/video_feed")

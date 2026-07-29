@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Worker Safety HUD - AI Ergonomic lifting Detector{% endblock %}
+{% block title %}WorkerSafety HUD - AI Ergonomics Monitor{% endblock %}
 
 {% block content %}
 <div id="workspace-app" class="workspace-fullscreen">
     
-    <!-- Top HUD Header -->
+    <!-- Floating Top HUD Header -->
     <header class="hud-topbar">
         <div class="hud-topbar__left">
             <a href="/" class="hud-topbar__brand">
@@ -14,7 +14,15 @@
                 </svg>
                 <span class="hud-topbar__title" style="margin-left: 8px;">WorkerSafety HUD</span>
             </a>
-            <span class="hud-badge" id="hud-status-badge">AI: YOLOv8-Pose</span>
+            <span class="hud-badge" id="sam3-model-badge" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80;">YOLO: ACTIVE</span>
+            <span class="hud-badge" id="resnet-model-badge" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc;">REBA: ON</span>
+            
+            <button id="btn-toggle-gpu" class="hud-btn hud-btn--gpu" style="margin-left: 8px; font-size: 11px; padding: 2px 8px; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3M9 9h6v6H9z"/>
+                </svg>
+                GPU
+            </button>
             <div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
                 <span class="hud-badge hud-badge--aman">STATUS: AMAN</span>
             </div>
@@ -22,16 +30,16 @@
 
         <div class="hud-topbar__center">
             <div class="hud-counter">
-                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.6);">
-                     SISTEM PEMANTAUAN ERGONOMI K3
+                <span id="hud-frame-counter" style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.7); text-transform: uppercase;">
+                    SISTEM MONITORING K3 REAL-TIME
                 </span>
             </div>
         </div>
 
         <div class="hud-topbar__right">
-            <!-- Source Selector Dropdown -->
+            <!-- Source Selector -->
             <div style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
-                <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.5);">SUMBER:</span>
+                <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4);">SUMBER:</span>
                 <select id="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
                         hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
                     <option value="webcam" {% if active_source == 'webcam' %}selected{% endif %}>Kamera Utama (Webcam)</option>
@@ -40,78 +48,320 @@
                     {% endfor %}
                 </select>
             </div>
+            
+            <button id="btn-toggle-fit-widgets" class="hud-btn hud-btn--icon" title="Fit Canvas Mode [Shift+W]" style="margin-right: 4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
+            </button>
+            <button id="btn-toggle-zen" class="hud-btn hud-btn--icon" title="Toggle Clean View / Zen Mode [Z]" style="margin-right: 4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+            <button id="btn-open-help" class="hud-btn hud-btn--icon" title="Keyboard Shortcuts Help [?]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </button>
         </div>
     </header>
 
-    <!-- Main Workspace Layout -->
-    <div style="display: flex; width: 100%; height: calc(100vh - 48px); margin-top: 48px; position: relative;">
-        
-        <!-- Left Drawer (Stream Manager & Roster) -->
-        <aside class="hud-drawer" id="hud-left-drawer" style="width: 280px; flex-shrink: 0; background: rgba(13, 16, 21, 0.85); border-right: 1px solid rgba(255,255,255,0.06); padding: 15px; display: flex; flex-direction: column; gap: 20px; z-index: 10;">
+    <!-- Collapsible Left Frame Drawer -->
+    <aside id="left-drawer" class="hud-drawer hud-drawer--left">
+        <div class="hud-drawer__toggle-group">
+            <button id="btn-toggle-left-drawer" class="hud-drawer__toggle" title="Toggle Completely">‹</button>
+            <button id="btn-minimize-left-drawer" class="hud-drawer__toggle hud-drawer__toggle--minimize" title="Minimize Drawer">🖼</button>
+        </div>
+        <div class="hud-drawer__header">
+            <h4 class="hud-drawer__title">Media & Roster Pekerja</h4>
+        </div>
+        <div id="left-drawer-content" class="hud-drawer__content" style="padding: 15px; display: flex; flex-direction: column; gap: 15px;">
+            <!-- Upload media section -->
             <div>
-                <h3 style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; letter-spacing: 0.5px;">🎥 INPUT MEDIA</h3>
-                <!-- Upload form using HTMX -->
+                <h5 style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.5px;">🎥 INPUT VIDEO</h5>
                 <form id="upload-form" hx-encoding="multipart/form-data" hx-post="/api/upload_video" hx-target="#upload-status" class="hud-form" style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="position: relative; overflow: hidden; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="font-size: 11px; color: rgba(255,255,255,0.5);">Klik untuk pilih file video (.mp4)</span>
+                    <div style="position: relative; overflow: hidden; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s;">
+                        <span style="font-size: 10px; color: rgba(255,255,255,0.5);">Pilih berkas video (.mp4)</span>
                         <input type="file" name="file" accept="video/*" required style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;" onchange="document.getElementById('file-name-label').innerText = this.files[0].name">
-                        <div id="file-name-label" style="font-size: 10px; color: #38bdf8; margin-top: 5px; font-weight: 500;"></div>
+                        <div id="file-name-label" style="font-size: 9px; color: #38bdf8; margin-top: 5px; font-weight: 500;"></div>
                     </div>
-                    <button type="submit" class="hud-btn" style="background: #3b82f6; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                    <button type="submit" class="hud-btn" style="background: #3b82f6; border: none; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.2s; text-align: center;">
                         Unggah Video Baru
                     </button>
                 </form>
                 <div id="upload-status" style="font-size: 10px; margin-top: 6px;"></div>
             </div>
 
+            <!-- Active worker roster -->
             <div style="flex: 1; display: flex; flex-direction: column;">
-                <h3 style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; letter-spacing: 0.5px;">👥 ROSTER PEKERJA AKTIF</h3>
+                <h5 style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.5px;">👥 ROSTER PEKERJA AKTIF</h5>
                 <div id="worker-roster-container" hx-get="/hud/left-drawer" hx-trigger="every 1s" hx-swap="outerHTML" style="flex: 1; overflow-y: auto;">
-                    <!-- Hydrated dynamically by HTMX -->
-                    <div style="padding: 10px; text-align: center; color: rgba(255,255,255,0.3); font-size: 11px;">Membuka data roster...</div>
+                    {% include "partials/left_drawer.html" %}
+                </div>
+            </div>
+
+            <!-- Ergonomic Heuristics Rules card -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px; font-size: 9px; color: rgba(255,255,255,0.4); line-height: 1.4;">
+                <strong style="color: #fff; display: block; margin-bottom: 4px;">Pedoman Pengangkatan:</strong>
+                • Trunk Bending: Max 20° (Aman)<br>
+                • Knee Squat: Menekuk lutut (>90°)<br>
+                • Twist Pinggang: Minimized (<15°)
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Viewport Canvas -->
+    <main class="canvas-viewport" id="stream-viewer-container" style="position: absolute; left: 332px; right: 332px; top: 84px; bottom: 72px; transition: all 0.3s ease;">
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+            <img id="main-frame-img" class="canvas-viewport__img" src="/api/video_feed" alt="Video Monitor Stream" />
+            <div style="position: absolute; bottom: 15px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 10px; font-weight: 600; color: #4ade80;">
+                 ● LIVE MONITORING ACTIVE
+            </div>
+        </div>
+    </main>
+
+    <!-- Collapsible Right Verification & Annotation Side-Sheet -->
+    <aside id="right-sidesheet" class="hud-sidesheet">
+        <button id="btn-toggle-right-sidesheet" class="hud-sidesheet__toggle" title="Toggle Side Panel">›</button>
+        <div class="hud-sidesheet__header">
+            <h3 class="hud-sidesheet__title">Analisis Ergonomi REBA</h3>
+        </div>
+        <div id="right-sidesheet-content" class="hud-sidesheet__content" hx-get="/hud/right-sidesheet" hx-trigger="every 500ms" hx-swap="innerHTML">
+            {% include "partials/sidesheet.html" %}
+        </div>
+    </aside>
+
+    <!-- Bottom Shortcut Helper Bar -->
+    <div class="hud-bottombar">
+        <div class="hud-btn-group" title="Navigasi Sumber Stream">
+            <button class="hud-btn--shortcut-action" onclick="alert('Playback control mock')">◀</button>
+            <button class="hud-btn--shortcut-action" onclick="alert('Playback control mock')">▶</button>
+            <span class="hud-btn-group-label" style="display:inline-flex; align-items:center; gap:4px;">
+                <kbd>PLAYBACK</kbd>
+            </span>
+        </div>
+
+        <button id="btn-bottom-select" class="hud-btn hud-btn--shortcut hud-btn--active" title="Mode Select [S]">
+            <kbd>S</kbd>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+        </button>
+
+        <button id="btn-bottom-toggle-zen" class="hud-btn hud-btn--shortcut" title="Toggle Zen Mode [Z]">
+            <kbd>Z</kbd>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+
+        <button id="btn-bottom-fit-image" class="hud-btn hud-btn--shortcut" title="Fit Canvas Mode [Shift+W]">
+            <kbd>⇧</kbd><kbd>W</kbd>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
+        </button>
+
+        <button id="btn-bottom-help" class="hud-btn hud-btn--shortcut" title="Keyboard Shortcuts Help [?]">
+            <kbd>?</kbd>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+    </div>
+
+    <!-- GPU Management Panel Overlay -->
+    <div id="gpu-management-panel" class="gpu-overlay-panel">
+        <div class="gpu-panel-header">
+            <div class="gpu-panel-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3M9 9h6v6H9z"/></svg>
+                GPU Management
+            </div>
+            <button class="gpu-close-btn" id="btn-gpu-close">&times;</button>
+        </div>
+        
+        <div class="gpu-panel-content">
+            <div class="gpu-section-title">Devices & Usage</div>
+            <div class="gpu-card">
+                <div class="gpu-card-header">
+                    <span style="font-weight:bold; color:#c084fc;">NVIDIA GeForce RTX 4090</span>
+                    <span class="hud-badge">Active</span>
+                </div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.7); line-height:1.6; margin-top: 6px;">
+                    • VRAM Occupied: 4.85 GB / 24.57 GB<br>
+                    • Inference Engine: PyTorch / CUDA<br>
+                    • Device Index: cuda:0
                 </div>
             </div>
             
-            <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 9px; color: rgba(255,255,255,0.3); line-height: 1.4;">
-                <strong>Pedoman Ergonomi:</strong><br>
-                • Trunk Bending: Max 20°<br>
-                • Lifting Style: Knee Squat (>90°)<br>
-                • Twisting: Minimized (<15°)
+            <div class="gpu-section-title">Active Models</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.7); line-height:1.6;">
+                • yolov8n-pose.pt (Pose Estimation) - Loaded<br>
+                • ergonomics.py (REBA Logic Engine) - Running
             </div>
-        </aside>
-
-        <!-- Main Viewport Canvas -->
-        <main class="canvas-viewport" id="stream-viewer-container">
-            <!-- MJPEG Stream Player -->
-            <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                <img id="main-frame-img" class="canvas-viewport__img" src="/api/video_feed" alt="Video Monitor Stream" />
-                <div style="position: absolute; bottom: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 11px; font-weight: 600; color: #4ade80;">
-                     ● LIVE MONITORING ACTIVE
-                </div>
-            </div>
-        </main>
-
-        <!-- Right Sidesheet (Ergonomic Risk Details) -->
-        <aside class="hud-sidesheet" id="hud-right-sidesheet" style="width: 380px; flex-shrink: 0; background: rgba(13, 16, 21, 0.85); border-left: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; z-index: 10; overflow: hidden;"
-               hx-get="/hud/right-sidesheet" hx-trigger="every 500ms" hx-swap="outerHTML">
-            <!-- Hydrated dynamically by HTMX -->
-            <div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin: auto;">
-                Memuat panel analisis risiko...
-            </div>
-        </aside>
-
+        </div>
+        
+        <div class="gpu-panel-footer">
+            <button class="gpu-btn-refresh" onclick="alert('GPU Status Refreshed!')">
+                Refresh Status
+            </button>
+        </div>
     </div>
+
+    <!-- Help Modal Overlay -->
+    <div id="modal-help" class="hud-modal hidden" style="z-index: 10001; background: rgba(0,0,0,0.6); position: fixed; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <div class="hud-modal__content" style="max-width:500px; width:100%; padding:20px; background:#0f172a; border:1px solid #334155; border-radius:12px; color:#f8fafc;">
+            <div class="hud-modal__header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:10px; margin-bottom:15px;">
+                <h3 style="margin:0; font-size:16px; color:#38bdf8;">⌨️ Keyboard Shortcuts Help</h3>
+                <button class="hud-modal__close" id="btn-help-close" style="background:none; border:none; color:#94a3b8; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div class="hud-modal__body" style="font-size:13px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                <div><kbd style="background:#1e293b; border:1px solid #475569; padding:2px 6px; border-radius:4px; font-family:monospace; margin-right:8px;">Z</kbd> Toggle Zen Mode (Clean View)</div>
+                <div><kbd style="background:#1e293b; border:1px solid #475569; padding:2px 6px; border-radius:4px; font-family:monospace; margin-right:8px;">Shift + W</kbd> Fit Image / Viewport Canvas alignment</div>
+                <div><kbd style="background:#1e293b; border:1px solid #475569; padding:2px 6px; border-radius:4px; font-family:monospace; margin-right:8px;">G</kbd> Toggle GPU Management Panel</div>
+                <div><kbd style="background:#1e293b; border:1px solid #475569; padding:2px 6px; border-radius:4px; font-family:monospace; margin-right:8px;">?</kbd> Toggle Keyboard Shortcuts Help Modal</div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
     // Event listener to reload list after file upload
     document.body.addEventListener('htmx:afterRequest', function(evt) {
         if (evt.detail.target.id === 'upload-status' && evt.detail.xhr.status === 200) {
-            // Success upload, trigger select dropdown update and reload selector if possible
             setTimeout(function() {
                 window.location.reload();
             }, 1000);
         }
     });
+
+    // Collapse and toggle UI client-side classes
+    const leftDrawer = document.getElementById('left-drawer');
+    const rightSidesheet = document.getElementById('right-sidesheet');
+    const gpuPanel = document.getElementById('gpu-management-panel');
+    const helpModal = document.getElementById('modal-help');
+    const canvasViewport = document.getElementById('stream-viewer-container');
+
+    const btnToggleLeft = document.getElementById('btn-toggle-left-drawer');
+    const btnMinimizeLeft = document.getElementById('btn-minimize-left-drawer');
+    const btnToggleRight = document.getElementById('btn-toggle-right-sidesheet');
+    const btnToggleGpu = document.getElementById('btn-toggle-gpu');
+    const btnGpuClose = document.getElementById('btn-gpu-close');
+    const btnOpenHelp = document.getElementById('btn-open-help');
+    const btnHelpClose = document.getElementById('btn-help-close');
+    const btnBottomHelp = document.getElementById('btn-bottom-help');
+    const btnBottomZen = document.getElementById('btn-bottom-toggle-zen');
+    const btnToggleZenHeader = document.getElementById('btn-toggle-zen');
+    const btnBottomFit = document.getElementById('btn-bottom-fit-image');
+    const btnFitHeader = document.getElementById('btn-toggle-fit-widgets');
+
+    // Left Drawer slide toggle
+    btnToggleLeft.addEventListener('click', () => {
+        leftDrawer.classList.toggle('hud-drawer--collapsed');
+        btnToggleLeft.innerText = leftDrawer.classList.contains('hud-drawer--collapsed') ? '›' : '‹';
+        adjustViewport();
+    });
+
+    // Left Drawer minimize width toggle
+    btnMinimizeLeft.addEventListener('click', () => {
+        leftDrawer.classList.toggle('hud-drawer--minimized');
+        btnMinimizeLeft.classList.toggle('hud-drawer__toggle--active');
+        adjustViewport();
+    });
+
+    // Right Sidesheet slide toggle
+    btnToggleRight.addEventListener('click', () => {
+        rightSidesheet.classList.toggle('hud-sidesheet--collapsed');
+        btnToggleRight.innerText = rightSidesheet.classList.contains('hud-sidesheet--collapsed') ? '‹' : '›';
+        adjustViewport();
+    });
+
+    // GPU Panel toggling
+    btnToggleGpu.addEventListener('click', () => {
+        gpuPanel.classList.toggle('active');
+    });
+    btnGpuClose.addEventListener('click', () => {
+        gpuPanel.classList.remove('active');
+    });
+
+    // Help Modal toggling
+    const toggleHelp = () => {
+        helpModal.classList.toggle('hidden');
+    };
+    btnOpenHelp.addEventListener('click', toggleHelp);
+    btnBottomHelp.addEventListener('click', toggleHelp);
+    btnHelpClose.addEventListener('click', () => helpModal.classList.add('hidden'));
+
+    // Fit Viewport canvas bounds depending on sidesheets status
+    function adjustViewport() {
+        let leftBound = '16px';
+        let rightBound = '16px';
+        
+        if (!leftDrawer.classList.contains('hud-drawer--collapsed')) {
+            leftBound = leftDrawer.classList.contains('hud-drawer--minimized') ? '128px' : '332px';
+        }
+        
+        if (!rightSidesheet.classList.contains('hud-sidesheet--collapsed')) {
+            rightBound = '332px';
+        }
+        
+        canvasViewport.style.left = leftBound;
+        canvasViewport.style.right = rightBound;
+    }
+
+    // Toggle Fit Canvas
+    function toggleFitCanvas() {
+        const isFit = canvasViewport.style.left === '16px' && canvasViewport.style.right === '16px';
+        if (isFit) {
+            adjustViewport();
+            btnFitHeader.classList.remove('hud-btn--active');
+            btnBottomFit.classList.remove('hud-btn--active');
+        } else {
+            canvasViewport.style.left = '16px';
+            canvasViewport.style.right = '16px';
+            btnFitHeader.classList.add('hud-btn--active');
+            btnBottomFit.classList.add('hud-btn--active');
+        }
+    }
+    btnBottomFit.addEventListener('click', toggleFitCanvas);
+    btnFitHeader.addEventListener('click', toggleFitCanvas);
+
+    // Zen Mode (Hide all panels)
+    function toggleZenMode() {
+        const isZen = leftDrawer.classList.contains('hud-drawer--collapsed') && rightSidesheet.classList.contains('hud-drawer--collapsed');
+        if (isZen) {
+            // Restore
+            leftDrawer.classList.remove('hud-drawer--collapsed');
+            rightSidesheet.classList.remove('hud-sidesheet--collapsed');
+            btnToggleLeft.innerText = '‹';
+            btnToggleRight.innerText = '›';
+            btnBottomZen.classList.remove('hud-btn--active');
+            btnToggleZenHeader.classList.remove('hud-btn--active');
+            adjustViewport();
+        } else {
+            // Zen
+            leftDrawer.classList.add('hud-drawer--collapsed');
+            rightSidesheet.classList.add('hud-sidesheet--collapsed');
+            btnToggleLeft.innerText = '›';
+            btnToggleRight.innerText = '‹';
+            btnBottomZen.classList.add('hud-btn--active');
+            btnToggleZenHeader.classList.add('hud-btn--active');
+            canvasViewport.style.left = '16px';
+            canvasViewport.style.right = '16px';
+        }
+    }
+    btnBottomZen.addEventListener('click', toggleZenMode);
+    btnToggleZenHeader.addEventListener('click', toggleZenMode);
+
+    // Keyboard Shortcuts mapping
+    window.addEventListener('keydown', (e) => {
+        // Ignore inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        const key = e.key.toLowerCase();
+        
+        if (key === 'z') {
+            toggleZenMode();
+        } else if (key === 'g') {
+            gpuPanel.classList.toggle('active');
+        } else if (key === '?') {
+            toggleHelp();
+        } else if (key === 'w' && e.shiftKey) {
+            toggleFitCanvas();
+        }
+    });
+
+    // Initialize layout positions
+    adjustViewport();
 </script>
 {% endblock %}
