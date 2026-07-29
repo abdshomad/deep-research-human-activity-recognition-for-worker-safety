@@ -52,6 +52,13 @@ Berikut adalah daftar fitur inovatif dan kustomisasi teknis yang ditambahkan sec
   - `G` : **GPU Management Overlay**.
   - `?` : **Help Shortcuts Modal**.
 
+### ⚠️ 1.7 Multi-Behavior Unsafe Act Detection Suite (Perilaku Berbahaya Lapangan)
+- **Deskripsi:** Ekstensi modul deteksi multi-perilaku berbahaya berbasis riset `riset_unsafe_behavior_lapangan (1).md`:
+  - **🏃 Berlari di Area Kerja (Running Hazard):** Mengukur kecepatan *centroid velocity* antar-frame untuk mendeteksi pekerja berlari atau tergesa-gesa.
+  - **📱 Distraksi / Penggunaan Gadget:** Mengukur rasio jarak pergelangan tangan ke wajah (*wrist-to-face proximity*) dipadu sudut kepala menunduk.
+  - **⛔ Virtual Geofencing (Zona Terlarang):** Memeriksa koordinat kaki pekerja terhadap poligon zona bahaya virtual yang terpasang di canvas video.
+  - **⏳ Postur Statis Janggal:** Pelacakan timer durasi kumulatif pekerja yang menahan posisi bungkuk/jongkok tanpa jeda.
+
 ---
 
 ## 2. 🔬 Vision Framework & Algoritma Ergonomi (Core Engine)

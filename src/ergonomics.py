@@ -20,13 +20,13 @@ def calculate_angle(a, b, c):
 def calculate_trunk_angle(left_shoulder, right_shoulder, left_hip, right_hip):
     """
     Calculates the angle (in degrees) of the torso/trunk relative to the vertical axis.
-    $0^\\circ$ means upright, larger angles mean bending forward or backward.
+    0° means upright, larger angles mean bending forward or backward.
     """
     sh_mid = (np.array(left_shoulder[:2]) + np.array(right_shoulder[:2])) / 2.0
     hip_mid = (np.array(left_hip[:2]) + np.array(right_hip[:2])) / 2.0
     
     trunk_vector = sh_mid - hip_mid
-    vertical_vector = np.array([0, -1])  # Points straight up in image coordinates (y decreases upwards)
+    vertical_vector = np.array([0, -1])  # Points straight up in image coordinates
     
     cosine_angle = np.dot(trunk_vector, vertical_vector) / (np.linalg.norm(trunk_vector) * np.linalg.norm(vertical_vector) + 1e-6)
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
@@ -35,25 +35,18 @@ def calculate_trunk_angle(left_shoulder, right_shoulder, left_hip, right_hip):
 def calculate_shoulder_tilt(left_shoulder, right_shoulder):
     """
     Calculates the angle of the shoulders relative to the horizontal axis.
-    Indicates lateral bending or asymmetric lifting.
     """
     sh_vec = np.array(right_shoulder[:2]) - np.array(left_shoulder[:2])
-    # Angle relative to horizontal [1, 0]
     horizontal = np.array([1, 0])
     cosine_angle = np.dot(sh_vec, horizontal) / (np.linalg.norm(sh_vec) * np.linalg.norm(horizontal) + 1e-6)
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
-    
-    # We want tilt relative to horizontal, which is deviation from 0 degrees (if shoulders are horizontal)
-    # Since sh_vec goes from left to right, it should be horizontal (0 deg or 180 deg depending on direction)
     deg = float(np.degrees(angle))
-    # Normalize to 0-90 tilt
     tilt = abs(deg - 0) if deg < 90 else abs(180 - deg)
     return tilt
 
 def calculate_twist_angle(left_shoulder, right_shoulder, left_hip, right_hip):
     """
-    Estimates body twisting by calculating the angle difference (in 2D projection)
-    between the shoulder line and the hip line.
+    Estimates body twisting by calculating the angle difference between shoulder and hip lines.
     """
     sh_vec = np.array(right_shoulder[:2]) - np.array(left_shoulder[:2])
     hip_vec = np.array(right_hip[:2]) - np.array(left_hip[:2])
@@ -65,11 +58,8 @@ def calculate_twist_angle(left_shoulder, right_shoulder, left_hip, right_hip):
 def calculate_neck_angle(left_shoulder, right_shoulder, nose, left_ear=None, right_ear=None):
     """
     Calculates neck angle relative to the vertical line.
-    Uses nose and shoulder midpoint.
     """
     sh_mid = (np.array(left_shoulder[:2]) + np.array(right_shoulder[:2])) / 2.0
-    
-    # Head point: ear midpoint if available, otherwise nose
     if left_ear is not None and right_ear is not None:
         head_point = (np.array(left_ear[:2]) + np.array(right_ear[:2])) / 2.0
     else:
@@ -82,25 +72,74 @@ def calculate_neck_angle(left_shoulder, right_shoulder, nose, left_ear=None, rig
     angle = np.arccos(np.clip(cosine_angle, -1.0, 1.0))
     return float(np.degrees(angle))
 
+def evaluate_phone_distraction(kp, conf_threshold=0.5):
+    """
+    Detects phone usage / distraction based on wrist-to-head proximity and head pitch.
+    COCO Keypoints: 0: nose, 9: l_wrist, 10: r_wrist, 5: l_sh, 6: r_sh
+    """
+    def is_vis(i):
+        return kp.shape[1] >= 3 and kp[i, 2] >= conf_threshold
+        
+    if not (is_vis(5) and is_vis(6) and is_vis(0)):
+        return False, 0.0
+        
+    sh_width = np.linalg.norm(np.array(kp[6][:2]) - np.array(kp[5][:2]))
+    if sh_width <= 0:
+        return False, 0.0
+        
+    nose_pt = np.array(kp[0][:2])
+    min_dist_norm = 999.0
+    
+    for w_idx in [9, 10]:
+        if is_vis(w_idx):
+            w_pt = np.array(kp[w_idx][:2])
+            d_norm = np.linalg.norm(w_pt - nose_pt) / sh_width
+            if d_norm < min_dist_norm:
+                min_dist_norm = d_norm
+                
+    # Distraction condition: hand near head/face (< 1.1x shoulder width)
+    is_distracted = (min_dist_norm < 1.1)
+    return is_distracted, float(min_dist_norm)
+
+def evaluate_running_behavior(speed_px_per_sec, sh_width_px):
+    """
+    Detects running / hasty locomotion from centroid velocity.
+    """
+    if sh_width_px <= 0:
+        return False, 0.0
+        
+    normalized_speed = speed_px_per_sec / sh_width_px
+    is_running = (normalized_speed > 3.2)  # High movement speed threshold relative to body size
+    return is_running, float(normalized_speed)
+
+def evaluate_zone_intrusion(feet_pts, zone_polygon):
+    """
+    Checks if foot coordinates fall inside a restricted polygon area.
+    zone_polygon is a list of [x, y] vertices.
+    """
+    if not zone_polygon or len(zone_polygon) < 3:
+        return False
+        
+    from matplotlib.path import Path
+    poly_path = Path(zone_polygon)
+    
+    for pt in feet_pts:
+        if poly_path.contains_point(pt[:2]):
+            return True
+    return False
+
 def evaluate_ergonomics(keypoints, conf_threshold=0.5):
     """
     Evaluates keypoints list/array (shape: 17x3 or 17x2) from YOLOv8-pose.
     Returns a dictionary with angles and ergonomic classification.
     """
-    # Keypoint indexes in COCO:
-    # 0: nose, 3: l_ear, 4: r_ear, 5: l_shoulder, 6: r_shoulder
-    # 11: l_hip, 12: r_hip, 13: l_knee, 14: r_knee, 15: l_ankle, 16: r_ankle
-    # 9: l_wrist, 10: r_wrist
-    
     kp = np.array(keypoints)
     
-    # Helper to check confidence
     def is_visible(idx):
-        if kp.shape[1] < 3:  # Only [x, y] coordinates
+        if kp.shape[1] < 3:
             return True
         return kp[idx, 2] >= conf_threshold
 
-    # Required core points for trunk angle
     core_points = [5, 6, 11, 12]  # shoulders & hips
     if not all(is_visible(i) for i in core_points):
         return {
@@ -118,7 +157,7 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
     shoulder_tilt = calculate_shoulder_tilt(l_sh, r_sh)
     twist_angle = calculate_twist_angle(l_sh, r_sh, l_hip, r_hip)
     
-    # Knee calculation (depends on visibility of hip, knee, ankle)
+    # Knee calculation
     left_knee_visible = is_visible(11) and is_visible(13) and is_visible(15)
     right_knee_visible = is_visible(12) and is_visible(14) and is_visible(16)
     
@@ -148,11 +187,9 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
         distances.append(np.linalg.norm(np.array(kp[10][:2]) - np.array(kp[12][:2])))
         
     if distances and sh_width > 0:
-        # Normalize distance using shoulder width
         wrist_hip_dist = float(np.mean(distances) / sh_width)
 
-    # Logic Classification based on REBA and ergonomics
-    # 1. Trunk Angle Check
+    # Logic Classification based on REBA
     reba_trunk_score = 1
     if trunk_angle > 60:
         reba_trunk_score = 4
@@ -161,15 +198,14 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
     elif trunk_angle > 5:
         reba_trunk_score = 2
         
-    # Additional penalty for twisting or lateral tilt
     if twist_angle > 15 or shoulder_tilt > 10:
         reba_trunk_score += 1
         
-    # 2. Knee / Lift technique Check
-    # Stoop Lift: bending trunk (> 20) while knees are relatively straight (> 150)
     is_stoop_lift = (trunk_angle > 25) and (avg_knee_angle > 145)
     
-    # Determine risk level
+    # Evaluate Phone Distraction
+    is_distracted, hand_face_dist = evaluate_phone_distraction(kp, conf_threshold)
+    
     risk_level = "AMAN"
     reasons = []
     
@@ -189,9 +225,12 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
             reasons.append("Beban terlalu jauh dari tubuh (overreaching)")
         if twist_angle > 15:
             reasons.append("Tubuh terpelintir (twisting) ringan")
-    else:
-        risk_level = "AMAN"
-        
+
+    if is_distracted:
+        if risk_level == "AMAN":
+            risk_level = "WASPADA"
+        reasons.append("📱 Distraksi: Menggunakan HP / Tangan di Dekat Wajah saat Bekerja")
+
     return {
         "status": "SUCCESS",
         "risk_level": risk_level,
@@ -203,6 +242,7 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
             "twist_angle": float(round(twist_angle, 1)),
             "shoulder_tilt": float(round(shoulder_tilt, 1)),
             "wrist_hip_dist_normalized": float(round(wrist_hip_dist, 2)),
-            "is_stoop_lift": bool(is_stoop_lift)
+            "is_stoop_lift": bool(is_stoop_lift),
+            "is_distracted": bool(is_distracted)
         }
     }
