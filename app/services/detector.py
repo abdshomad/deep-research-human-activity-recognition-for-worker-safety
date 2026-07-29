@@ -110,7 +110,9 @@ def background_worker():
             if cap is not None:
                 cap.release()
                 cap = None
-            if current_source == "webcam":
+            if isinstance(current_source, int) or (isinstance(current_source, str) and current_source.isdigit()):
+                cap = cv2.VideoCapture(int(current_source))
+            elif current_source == "webcam":
                 cap = cv2.VideoCapture(0)
             else:
                 cap = cv2.VideoCapture(current_source)
