@@ -33,7 +33,7 @@
         <select id="video-source-select" name="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
                 hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
             <option value="webcam" {% if active_source == 'webcam' or active_source == '0' %}selected{% endif %}>Kamera Utama / Laptop (Index 0)</option>
-            <option value="1" {% if active_source == '1' %}selected{% endif %}>📱 Kamera HP / Iriun (Index 1)</option>
+            <option value="1" {% if active_source == '1' %}selected{% endif %}>📱 Kamera HP / DroidCam (Index 1)</option>
             <option value="2" {% if active_source == '2' %}selected{% endif %}>📹 Kamera Eksternal (Index 2)</option>
             {% for src in sources %}
             <option value="{{ src }}" {% if active_source == src %}selected{% endif %}>{{ src }}</option>
