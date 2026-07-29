@@ -154,14 +154,17 @@ def background_worker():
                 cap = cv2.VideoCapture(current_source)
                 
         if cap is None or not cap.isOpened():
-            blank = np.zeros((480, 640, 3), dtype=np.uint8)
-            cv2.putText(blank, "Menghubungkan ke kamera...", (120, 240), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+            blank = np.zeros((480, 960, 3), dtype=np.uint8)
+            cv2.putText(blank, f"SUMBER VIDEO '{src}' TIDAK TERHUBUNG / TIDAK ADA", (120, 220), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (60, 76, 231), 2, cv2.LINE_AA)
+            cv2.putText(blank, "Silakan pilih Kamera 0 (Laptop) atau Kamera 1 (DroidCam) pada menu SUMBER", (100, 270), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
             _, buffer = cv2.imencode('.jpg', blank)
             with state.lock:
                 state.latest_frame = buffer.tobytes()
                 state.workers_data = []
-            time.sleep(0.5)
+            current_source = None  # Reset so thread can attempt next selection cleanly
+            time.sleep(1.0)
             continue
             
         ret, frame = cap.read()
