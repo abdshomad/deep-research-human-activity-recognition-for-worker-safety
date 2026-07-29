@@ -1,0 +1,20 @@
+# ============================================================
+# WorkerSafety HUD - Python Dependencies
+# ============================================================
+# Install with: pip install -r requirements.txt
+# ============================================================
+
+# --- Core AI / Computer Vision ---
+ultralytics>=8.4.0          # YOLOv8 Pose Estimation Engine
+opencv-python>=4.8.0        # Video capture, frame processing, drawing
+numpy>=1.24.0               # Numerical computation for angles & geometry
+torch>=2.0.0                # PyTorch backend for YOLO inference
+matplotlib>=3.7.0           # Virtual geofencing polygon math (path.Path)
+
+# --- Web Framework ---
+fastapi>=0.100.0            # Async web framework (ASGI)
+uvicorn>=0.23.0             # ASGI server to run FastAPI
+jinja2>=3.1.0               # HTML template rendering engine
+
+# --- Utilities ---
+python-multipart>=0.0.6     # Required by FastAPI for file upload (UploadFile)
