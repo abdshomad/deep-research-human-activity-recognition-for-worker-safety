@@ -42,9 +42,9 @@ async def set_source(request: Request):
         
     t = int(time.time())
     return HTMLResponse(content=f"""
-    <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
-        <img id="main-frame-img" class="canvas-viewport__img" src="/api/video_feed?t={t}" alt="Video Monitor Stream" />
-        <div style="position: absolute; bottom: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 11px; font-weight: 600; color: #4ade80;">
+    <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 14px; overflow: hidden;">
+        <img id="main-frame-img" class="canvas-viewport__img" src="/api/video_feed?t={t}" alt="Video Monitor Stream" style="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" />
+        <div style="position: absolute; bottom: 20px; background: rgba(0,0,0,0.65); padding: 6px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(12px); font-size: 11px; font-weight: 600; color: #4ade80;">
              ● LIVE MONITORING ACTIVE
         </div>
     </div>
