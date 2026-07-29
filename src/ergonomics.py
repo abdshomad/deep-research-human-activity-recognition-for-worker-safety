@@ -243,6 +243,6 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
             "shoulder_tilt": float(round(shoulder_tilt, 1)),
             "wrist_hip_dist_normalized": float(round(wrist_hip_dist, 2)),
             "is_stoop_lift": bool(is_stoop_lift),
-            "is_distracted": bool(is_distracted)
+            "is_distracted": bool(is_hand_to_face)
         }
     }
