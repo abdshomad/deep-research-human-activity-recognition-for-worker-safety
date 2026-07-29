@@ -16,6 +16,7 @@ from src.ergonomics import (
 from app.services.sse_manager import sse_manager
 from app.config import settings
 from fastapi.templating import Jinja2Templates
+from app.services.db import create_violation
 
 templates = Jinja2Templates(directory=settings.TEMPLATES_DIR)
 templates.env.cache = None
@@ -130,6 +131,8 @@ def background_worker():
     cap = None
     last_alert_time = 0
     tracking_history = {}  # {worker_id: (x, y, timestamp)}
+    hazard_durations = {}  # {worker_id: {"first_seen": timestamp, "snapshot_taken": bool}}
+
     
     while state.is_running:
         with state.lock:
@@ -247,29 +250,81 @@ def background_worker():
                 frame = draw_skeleton(frame, kp, risk_lvl, worker_id, conf_threshold=state.conf_threshold, 
                                       speed_label=speed_lbl, is_zone_hazard=is_zone_intruding)
                 
+                # SQLite Logging & Auto-Snapshotting for BAHAYA status
+                violation_id = None
+                if risk_lvl == "BAHAYA":
+                    if worker_id not in hazard_durations:
+                        hazard_durations[worker_id] = {
+                            "first_seen": now_time,
+                            "snapshot_taken": False,
+                            "violation_id": None
+                        }
+                    
+                    hazard_info = hazard_durations[worker_id]
+                    elapsed = now_time - hazard_info["first_seen"]
+                    # Instant trigger for zone intrusion, or 3s duration for other BAHAYA
+                    should_trigger = is_zone_intruding or (elapsed >= 3.0)
+                    
+                    if should_trigger and not hazard_info["snapshot_taken"]:
+                        hazard_info["snapshot_taken"] = True
+                        
+                        # Ensure static/violations folder exists
+                        violations_dir = os.path.join(settings.STATIC_DIR, "violations")
+                        os.makedirs(violations_dir, exist_ok=True)
+                        
+                        filename = f"violation_{worker_id}_{int(now_time)}.jpg"
+                        filepath = os.path.join(violations_dir, filename)
+                        relative_path = f"/static/violations/{filename}"
+                        
+                        # Save current frame snapshot to disk
+                        cv2.imwrite(filepath, frame)
+                        
+                        # Insert record into SQLite DB
+                        reasons_str = ", ".join(reasons)
+                        violation_id = create_violation(
+                            worker_id=worker_id,
+                            risk_level=risk_lvl,
+                            reasons=reasons_str,
+                            image_path=relative_path
+                        )
+                        hazard_info["violation_id"] = violation_id
+                else:
+                    if worker_id in hazard_durations:
+                        del hazard_durations[worker_id]
+                
+                # Render and broadcast SSE alert if needed
+                should_broadcast = False
+                if violation_id is not None:
+                    should_broadcast = True
+                elif risk_lvl == "WASPADA" and (now_time - last_alert_time > 3.0):
+                    last_alert_time = now_time
+                    should_broadcast = True
+                    
+                if should_broadcast:
+                    t_str = time.strftime("%H:%M:%S")
+                    try:
+                        alert_html = templates.get_template("partials/hazard_item.html").render({
+                            "violation_id": violation_id,
+                            "risk_level": risk_lvl,
+                            "time_str": t_str,
+                            "worker_id": worker_id,
+                            "reasons": reasons
+                        })
+                        sse_manager.broadcast(alert_html)
+                    except Exception as e:
+                        pass
+
+                # Get the violation_id if the worker is in active hazard state
+                active_violation_id = hazard_durations.get(worker_id, {}).get("violation_id") if risk_lvl == "BAHAYA" else None
+
                 if eval_res["status"] == "SUCCESS":
                     temp_workers.append({
                         "id": worker_id,
                         "risk_level": risk_lvl,
                         "reasons": reasons,
-                        "details": eval_res["details"]
+                        "details": eval_res["details"],
+                        "violation_id": active_violation_id
                     })
-                    
-                    # SSE Hazard Alert Swapping Broadcaster (Throttle to max 1 alert per second)
-                    if risk_lvl in ["BAHAYA", "WASPADA"] and (now_time - last_alert_time > 1.0):
-                        last_alert_time = now_time
-                        t_str = time.strftime("%H:%M:%S")
-                        
-                        try:
-                            alert_html = templates.get_template("partials/hazard_item.html").render({
-                                "risk_level": risk_lvl,
-                                "time_str": t_str,
-                                "worker_id": worker_id,
-                                "reasons": reasons
-                            })
-                            sse_manager.broadcast(alert_html)
-                        except Exception:
-                            pass
                 else:
                     temp_workers.append({
                         "id": worker_id,
@@ -281,7 +336,8 @@ def background_worker():
                             "twist_angle": 0.0,
                             "shoulder_tilt": 0.0,
                             "wrist_hip_dist_normalized": 0.0
-                        }
+                        },
+                        "violation_id": active_violation_id
                     })
                     
         _, buffer = cv2.imencode('.jpg', frame)

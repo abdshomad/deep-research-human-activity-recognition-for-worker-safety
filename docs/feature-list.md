@@ -88,8 +88,40 @@ Berikut adalah daftar 5 modul bahaya yang **telah aktif berjalan** pada engine p
 - **Modular Directory Layout:**
   - `app/main.py` — Entrypoint ASGI & static mounting
   - `app/config.py` — Pengaturan sistem & path
-  - `app/routes/hud.py` — Render partials HTMX (`/`, `/hud/left-drawer`, `/hud/right-sidesheet`)
-  - `app/routes/api.py` — REST API, stream MJPEG, & endpoint SSE
-  - `app/services/detector.py` — Background thread capture & multi-behavior evaluator
+  - `app/routes/hud.py` — Render partials HTMX (`/`, `/hud/left-drawer`, `/hud/right-sidesheet`, `/hud/violations`)
+  - `app/routes/api.py` — REST API, stream MJPEG, endpoint SSE, & follow-up actions
+  - `app/services/db.py` — Database SQLite & CRUD service
+  - `app/services/detector.py` — Background thread capture, multi-behavior evaluator, & auto-snapshot manager
   - `app/services/sse_manager.py` — Async queue broadcaster
-  - `app/templates/partials/` — 6 komponen partial HTML
+  - `app/templates/partials/` — Komponen partial HTML (termasuk modal detail & riwayat)
+  - `tests/test_violations.py` — Unit tests untuk SQLite DB dan API routing
+
+---
+
+## 5. 🚨 Sistem Intervensi K3, Auto-Snapshot & Riwayat Pelanggaran (TDD)
+
+### 📸 5.1 Auto-Snapshot & Logging SQLite Lokal
+- **Deskripsi:** AI secara otomatis mendeteksi status `BAHAYA` postural selama $\ge 3.0$ detik berturut-turut atau ketika terjadi pelanggaran `Zona Terlarang` secara instan.
+- **Kemampuan:**
+  - Menangkap gambar snapshot visual (`.jpg`) kerangka tubuh (skeleton) pekerja secara real-time dan menyimpannya di `/static/violations/`.
+  - Merekam metadata kejadian (Timestamp, ID Pekerja, Alasan Bahaya, Path Snapshot) ke database lokal **SQLite** (`violations.db`) dengan status awal `draft` (belum diverifikasi).
+
+### 💬 5.2 Interactive Action Modals (Operator Follow-Up)
+- **Deskripsi:** Kartu bahaya pada panel *Live Hazard Logs* dan kartu daftar pekerja aktif dapat diklik untuk membuka modal glassmorphic interaktif secara instan menggunakan HTMX.
+- **Kemampuan:**
+  - Menyajikan bukti visual tangkapan kamera (snapshot) dan metrik fisik terperinci.
+  - Form tindakan manual untuk operator:
+    - **Verifikasi Status:** *Draft*, *Konfirmasi Pelanggaran Resmi*, atau *Abaikan (Salah Deteksi)*.
+    - **Tindakan Lanjutan:** *Kirim Notifikasi Alert ke Supervisor* (simulasi eskalasi Telegram/WA) atau *Picu Peringatan Suara / Speaker Area*.
+    - **Catatan Penanganan:** Kolom input catatan operator.
+
+### 📋 5.3 Panel Riwayat Pelanggaran & Log Audit
+- **Deskripsi:** Tombol **"📋 RIWAYAT"** di header utama membuka modal audit log secara dinamis tanpa me-reload halaman.
+- **Kemampuan:**
+  - Menampilkan daftar tabel seluruh pelanggaran yang tercatat di database SQLite.
+  - Baris riwayat dapat diklik kembali untuk meninjau foto bukti snapshot lama dan detail tindakan yang diambil.
+
+### 🧪 5.4 TDD (Test-Driven Development) Verified Suite
+- **Deskripsi:** Suite pengujian unit test terotomatisasi di `tests/test_violations.py`.
+- **Kemampuan:** Memvalidasi keutuhan operasi database SQLite dan API routing secara mandiri dengan perintah `py tests/test_violations.py`.
+

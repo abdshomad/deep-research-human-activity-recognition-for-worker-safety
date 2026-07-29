@@ -6,6 +6,7 @@ import time
 import asyncio
 from app.services.detector import state
 from app.services.sse_manager import sse_manager
+from app.services.db import update_violation
 
 router = APIRouter()
 
@@ -85,3 +86,22 @@ async def sse_alerts(request: Request):
             sse_manager.unsubscribe(queue)
             
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+@router.post("/api/violations/{id}/action", response_class=HTMLResponse)
+async def post_violation_action(request: Request, id: int):
+    form_data = await request.form()
+    status = form_data.get("status", "draft")
+    action_taken = form_data.get("action_taken", "none")
+    notes = form_data.get("notes", "")
+    
+    # Update SQLite database
+    update_violation(id, status, action_taken, notes)
+    
+    # Return HTML that closes the modal
+    return HTMLResponse(content="""
+    <div id="modal-container" hx-swap-oob="true"></div>
+    <script>
+        console.log("Violation status updated successfully!");
+    </script>
+    """)
+

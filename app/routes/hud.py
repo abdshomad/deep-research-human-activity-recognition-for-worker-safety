@@ -6,6 +6,7 @@ import os
 import torch
 from app.config import settings
 from app.services.detector import state
+from app.services.db import get_violation, get_all_violations
 
 router = APIRouter()
 
@@ -100,3 +101,28 @@ async def get_overall_badge(request: Request):
         name="partials/overall_badge.html",
         context={"overall_risk": overall}
     )
+
+@router.get("/hud/violations/{id}", response_class=HTMLResponse)
+async def get_violation_detail(request: Request, id: int):
+    v = get_violation(id)
+    if not v:
+        return HTMLResponse(content="<div style='color: #ef4444; padding: 20px;'>Pelanggaran tidak ditemukan.</div>")
+    
+    # Extract reasons as a list if comma-separated
+    reasons_list = [r.strip() for r in v["reasons"].split(",") if r.strip()]
+    
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/modal_detail.html",
+        context={"v": v, "reasons_list": reasons_list}
+    )
+
+@router.get("/hud/violations", response_class=HTMLResponse)
+async def get_violations_history(request: Request):
+    violations = get_all_violations()
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/violations_history.html",
+        context={"violations": violations}
+    )
+

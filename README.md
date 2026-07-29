@@ -265,10 +265,11 @@ rtsp://username:password@192.168.1.100:554/stream1
 │   │
 │   ├── 📁 routes/                  # Endpoint HTTP
 │   │   ├── 📄 hud.py               # Render template HUD (/, /hud/*)
-│   │   └── 📄 api.py               # REST API (video feed, camera switch, SSE)
+│   │   └── 📄 api.py               # REST API (video feed, camera switch, SSE, follow-up)
 │   │
 │   ├── 📁 services/                # Logika bisnis
-│   │   ├── 📄 detector.py          # Background thread: YOLO capture + multi-behavior evaluator
+│   │   ├── 📄 db.py                # Database SQLite & CRUD service
+│   │   ├── 📄 detector.py          # Background thread: YOLO capture, multi-behavior evaluator, & auto-snapshot
 │   │   └── 📄 sse_manager.py       # Async SSE broadcaster
 │   │
 │   └── 📁 templates/               # Template HTML
@@ -280,20 +281,35 @@ rtsp://username:password@192.168.1.100:554/stream1
 │           ├── 📄 left_drawer.html
 │           ├── 📄 right_sidesheet.html
 │           ├── 📄 hazard_item.html
-│           └── 📄 overall_badge.html
+│           ├── 📄 overall_badge.html
+│           ├── 📄 modal_detail.html        # Modal detail pelanggaran & follow-up
+│           └── 📄 violations_history.html   # Modal tabel log audit riwayat
 │
 ├── 📁 src/                         # Modul algoritma inti
 │   └── 📄 ergonomics.py            # REBA engine + multi-behavior evaluators
 │
 ├── 📁 static/                      # Asset statis web
 │   ├── 📁 css/                     # Stylesheet (hud_base.css, dll.)
-│   └── 📁 js/                      # JavaScript (jika ada)
+│   └── 📁 violations/              # Folder penyimpanan otomatis snapshot (.jpg)
 │
 ├── 📁 docs/                        # Dokumentasi
 │   └── 📄 feature-list.md          # Daftar fitur aktif lengkap
 │
 └── 📁 tests/                       # Unit test
-    └── 📄 test_model.py
+    ├── 📄 test_model.py
+    └── 📄 test_violations.py       # Unit test database SQLite & API routing
+```
+
+---
+
+## 🧪 Pengujian Unit Test
+
+Aplikasi ini menggunakan pengujian otomatis berbasis TDD untuk memverifikasi integritas database dan fungsionalitas API.
+
+Untuk menjalankan unit test, ketik perintah berikut pada shell/terminal:
+
+```bash
+py tests/test_violations.py
 ```
 
 ---

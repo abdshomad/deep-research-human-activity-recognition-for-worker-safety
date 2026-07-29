@@ -6,3 +6,6 @@ venv/
 .ipynb_checkpoints/
 *.log
 pa somad/
+*.db
+/static/violations/
+

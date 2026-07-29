@@ -63,10 +63,22 @@
         {% set item_icon = '🟢' %}
     {% endif %}
     
-    <div class="hud-sidesheet__panel" style="background: rgba(255,255,255,0.02); border: 1px solid {{ item_border }}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+    <div class="hud-sidesheet__panel" 
+         {% if w.violation_id %}
+         hx-get="/hud/violations/{{ w.violation_id }}"
+         hx-target="#modal-container"
+         style="background: rgba(255,255,255,0.02); border: 1px solid {{ item_border }}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; cursor: pointer;"
+         onmouseover="this.style.background='rgba(255,255,255,0.04)'"
+         onmouseout="this.style.background='rgba(255,255,255,0.02)'"
+         {% else %}
+         style="background: rgba(255,255,255,0.02); border: 1px solid {{ item_border }}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;"
+         {% endif %}>
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px;">
             <span style="font-size: 12px; font-weight: bold; color: #fff;">
                 {{ item_icon }} Pekerja #{{ w_id }}
+                {% if w.violation_id %}
+                <span style="font-size: 8px; color: #38bdf8; margin-left: 4px; font-weight: normal; vertical-align: middle;">(🔍 Lihat Detail)</span>
+                {% endif %}
             </span>
             <span class="hud-badge {% if w_risk == 'BAHAYA' %}hud-badge--bahaya{% elif w_risk == 'WASPADA' %}hud-badge--waspada{% else %}hud-badge--aman{% endif %}">
                 {{ w_risk }}

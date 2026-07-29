@@ -14,9 +14,13 @@
         </svg>
         GPU
     </button>
+    <button hx-get="/hud/violations" hx-target="#modal-container" class="hud-btn" style="margin-left: 8px; font-size: 11px; padding: 2px 8px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+        📋 RIWAYAT
+    </button>
     <div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
         {% include "partials/overall_badge.html" %}
     </div>
+
 </div>
 
 <div class="hud-topbar__center">

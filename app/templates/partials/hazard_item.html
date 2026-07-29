@@ -1,12 +1,29 @@
-<div class="sidesheet-card" style="border-left: 3px solid {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}; margin-bottom: 8px; animation: fadeIn 0.3s ease;">
+<div class="sidesheet-card" 
+     {% if violation_id %}
+     hx-get="/hud/violations/{{ violation_id }}" 
+     hx-target="#modal-container" 
+     style="border-left: 3px solid {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}; margin-bottom: 8px; animation: fadeIn 0.3s ease; cursor: pointer; position: relative;"
+     onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+     onmouseout="this.style.background='rgba(255,255,255,0.02)'"
+     {% else %}
+     style="border-left: 3px solid {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}; margin-bottom: 8px; animation: fadeIn 0.3s ease; position: relative;"
+     {% endif %}>
     <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
         <strong style="color: {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}">⚠️ HAZARD DETECTED ({{ risk_level }})</strong>
         <span style="color:rgba(255,255,255,0.4); font-size:10px;">{{ time_str }}</span>
     </div>
-    <div style="font-size:11px; color:#f8fafc; font-weight:600; margin-bottom:4px;">Pekerja #{{ worker_id }}</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#f8fafc; font-weight:600; margin-bottom:4px;">
+        <span>Pekerja #{{ worker_id }}</span>
+        {% if violation_id %}
+        <span style="font-size: 8.5px; color: #38bdf8; text-transform: uppercase; font-weight: bold; background: rgba(56,189,248,0.1); padding: 1px 4px; border-radius: 3px; border: 1px solid rgba(56,189,248,0.2);">
+            🔍 Detail Aksi
+        </span>
+        {% endif %}
+    </div>
     <ul style="margin:0; padding-left:14px; font-size:10px; color:rgba(255,255,255,0.75);">
         {% for r in reasons %}
         <li style="margin-bottom: 2px;">{{ r }}</li>
         {% endfor %}
     </ul>
 </div>
+
