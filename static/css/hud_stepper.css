@@ -1,0 +1,121 @@
+/* Horizontal Frame Expansion Stepper */
+.hud-stepper-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 3px 8px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.hud-stepper__label {
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hud-stepper__list {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 280px;
+  flex-wrap: nowrap;
+}
+.hud-stepper__list::-webkit-scrollbar {
+  display: none;
+}
+
+.hud-stepper__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Completed Steps (up to last 2) */
+.hud-stepper__step--completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  cursor: default;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+/* Active Current Step */
+.hud-stepper__step--active {
+  background: rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+  font-weight: 700;
+  cursor: default;
+}
+
+/* Clickable Next Step (Immediate next only) */
+.hud-stepper__step--next {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(168, 85, 247, 0.85));
+  color: #ffffff;
+  border: 1px solid rgba(192, 132, 252, 0.6);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.35);
+  font-weight: 600;
+}
+
+.hud-stepper__step--next:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(168, 85, 247, 1));
+  box-shadow: 0 0 10px rgba(192, 132, 252, 0.6);
+  transform: translateY(-1px);
+}
+
+.hud-stepper__step--next:active {
+  transform: translateY(0);
+}
+
+/* Disabled 2nd Upcoming Step */
+.hud-stepper__step--upcoming-disabled {
+  background: rgba(255, 255, 255, 0.04);
+  color: #6b7280;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  cursor: not-allowed;
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
+/* Loading state for Next Step */
+.hud-stepper__step--loading {
+  background: rgba(99, 102, 241, 0.5) !important;
+  color: #e0e7ff !important;
+  cursor: wait !important;
+  opacity: 0.85;
+}
+
+@keyframes stepperSpin {
+  to { transform: rotate(360deg); }
+}
+
+.hud-stepper__spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: stepperSpin 0.7s linear infinite;
+  margin-left: 2px;
+}

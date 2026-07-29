@@ -1,0 +1,48 @@
+/* Left Drawer & Right Side-Sheet HUD Panels (Modular Imports) */
+@import url('/static/css/hud_drawer.css');
+@import url('/static/css/hud_sidesheet.css');
+
+/* Unified height and bottom positioning rules to prevent bottom HUD overlap */
+.hud-drawer,
+.hud-sidesheet {
+  bottom: 80px;
+}
+
+/* Zen Mode / Fullscreen Clean View: Hide all HUD Overlay Widgets */
+.hud-topbar,
+#left-drawer,
+#right-sidesheet,
+.hud-bottombar,
+#popover-action-bar {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.workspace-fullscreen--zen .hud-topbar {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-100%) !important;
+}
+
+.workspace-fullscreen--zen #left-drawer {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateX(-100%) !important;
+}
+
+.workspace-fullscreen--zen #right-sidesheet {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateX(100%) !important;
+}
+
+.workspace-fullscreen--zen .hud-bottombar {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translate(-50%, 100%) !important;
+}
+
+.workspace-fullscreen--zen #popover-action-bar {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.9) !important;
+}

@@ -1,0 +1,330 @@
+/* static/css/gpu_manager.css */
+/* Premium GPU Management Widget style sheet with glassmorphism */
+
+.gpu-overlay-panel {
+  position: fixed;
+  top: 55px;
+  left: 20px;
+  width: 420px;
+  max-height: calc(100vh - 80px);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px 2px rgba(168, 85, 247, 0.15);
+  color: #f8fafc;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-450px);
+  opacity: 0;
+}
+
+.gpu-overlay-panel.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.gpu-panel-header {
+  padding: 14px 16px;
+  background: rgba(168, 85, 247, 0.15);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gpu-panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #c084fc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gpu-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.gpu-close-btn:hover {
+  color: #ef4444;
+}
+
+.gpu-panel-content {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gpu-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* GPU Card */
+.gpu-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.gpu-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.gpu-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.gpu-card-index {
+  font-size: 10px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #d8b4fe;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Memory Usage Meter */
+.gpu-memory-stats {
+  font-size: 11px;
+  color: #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.gpu-memory-bar-bg {
+  height: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gpu-memory-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  width: 0%;
+  transition: width 0.5s ease-out;
+}
+
+/* Loaded Models List */
+.gpu-loaded-models {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gpu-loaded-model-item {
+  font-size: 11px;
+  background: rgba(15, 23, 42, 0.4);
+  border-left: 2px solid #a855f7;
+  padding: 4px 8px;
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gpu-loaded-model-name {
+  color: #e2e8f0;
+}
+
+.gpu-loaded-model-size {
+  color: #a855f7;
+  font-weight: 600;
+}
+
+/* Model Controller Widget */
+.model-control-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.model-control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.model-control-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.model-control-status {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.model-status-active {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.model-status-inactive {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.model-status-warming {
+  background: rgba(234, 179, 8, 0.2);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+.model-control-body {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.model-device-select {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #cbd5e1;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.model-device-select:focus {
+  border-color: #c084fc;
+}
+
+.model-action-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.model-action-btn--load {
+  background: rgba(168, 85, 247, 0.2);
+  color: #e9d5ff;
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.model-action-btn--load:hover {
+  background: rgba(168, 85, 247, 0.35);
+  border-color: #c084fc;
+}
+
+.model-action-btn--unload {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fecaca;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.model-action-btn--unload:hover {
+  background: rgba(239, 68, 68, 0.35);
+  border-color: #f87171;
+}
+
+/* Panel Footer Actions */
+.gpu-panel-footer {
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.9);
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  display: flex;
+  gap: 8px;
+}
+
+.gpu-btn-refresh {
+  flex: 1;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #e9d5ff;
+  padding: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.gpu-btn-refresh:hover {
+  background: rgba(168, 85, 247, 0.3);
+  border-color: #c084fc;
+}
+
+.gpu-btn-refresh svg {
+  transition: transform 0.4s ease;
+}
+
+.gpu-btn-refresh:hover svg {
+  transform: rotate(180deg);
+}
+
+/* Spinner */
+.gpu-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(168, 85, 247, 0.2);
+  border-top-color: #c084fc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

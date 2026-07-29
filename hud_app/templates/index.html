@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Worker Safety HUD - AI Ergonomic lifting Detector{% endblock %}
+
+{% block content %}
+<div id="workspace-app" class="workspace-fullscreen">
+    
+    <!-- Top HUD Header -->
+    <header class="hud-topbar">
+        <div class="hud-topbar__left">
+            <a href="/" class="hud-topbar__brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #38bdf8;">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                </svg>
+                <span class="hud-topbar__title" style="margin-left: 8px;">WorkerSafety HUD</span>
+            </a>
+            <span class="hud-badge" id="hud-status-badge">AI: YOLOv8-Pose</span>
+            <div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
+                <span class="hud-badge hud-badge--aman">STATUS: AMAN</span>
+            </div>
+        </div>
+
+        <div class="hud-topbar__center">
+            <div class="hud-counter">
+                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.6);">
+                     SISTEM PEMANTAUAN ERGONOMI K3
+                </span>
+            </div>
+        </div>
+
+        <div class="hud-topbar__right">
+            <!-- Source Selector Dropdown -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
+                <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.5);">SUMBER:</span>
+                <select id="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
+                        hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
+                    <option value="webcam" {% if active_source == 'webcam' %}selected{% endif %}>Kamera Utama (Webcam)</option>
+                    {% for src in sources %}
+                    <option value="{{ src }}" {% if active_source == src %}selected{% endif %}>{{ src }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div style="display: flex; width: 100%; height: calc(100vh - 48px); margin-top: 48px; position: relative;">
+        
+        <!-- Left Drawer (Stream Manager & Roster) -->
+        <aside class="hud-drawer" id="hud-left-drawer" style="width: 280px; flex-shrink: 0; background: rgba(13, 16, 21, 0.85); border-right: 1px solid rgba(255,255,255,0.06); padding: 15px; display: flex; flex-direction: column; gap: 20px; z-index: 10;">
+            <div>
+                <h3 style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; letter-spacing: 0.5px;">🎥 INPUT MEDIA</h3>
+                <!-- Upload form using HTMX -->
+                <form id="upload-form" hx-encoding="multipart/form-data" hx-post="/api/upload_video" hx-target="#upload-status" class="hud-form" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="position: relative; overflow: hidden; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s;">
+                        <span style="font-size: 11px; color: rgba(255,255,255,0.5);">Klik untuk pilih file video (.mp4)</span>
+                        <input type="file" name="file" accept="video/*" required style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;" onchange="document.getElementById('file-name-label').innerText = this.files[0].name">
+                        <div id="file-name-label" style="font-size: 10px; color: #38bdf8; margin-top: 5px; font-weight: 500;"></div>
+                    </div>
+                    <button type="submit" class="hud-btn" style="background: #3b82f6; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                        Unggah Video Baru
+                    </button>
+                </form>
+                <div id="upload-status" style="font-size: 10px; margin-top: 6px;"></div>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column;">
+                <h3 style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; letter-spacing: 0.5px;">👥 ROSTER PEKERJA AKTIF</h3>
+                <div id="worker-roster-container" hx-get="/hud/left-drawer" hx-trigger="every 1s" hx-swap="outerHTML" style="flex: 1; overflow-y: auto;">
+                    <!-- Hydrated dynamically by HTMX -->
+                    <div style="padding: 10px; text-align: center; color: rgba(255,255,255,0.3); font-size: 11px;">Membuka data roster...</div>
+                </div>
+            </div>
+            
+            <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 9px; color: rgba(255,255,255,0.3); line-height: 1.4;">
+                <strong>Pedoman Ergonomi:</strong><br>
+                • Trunk Bending: Max 20°<br>
+                • Lifting Style: Knee Squat (>90°)<br>
+                • Twisting: Minimized (<15°)
+            </div>
+        </aside>
+
+        <!-- Main Viewport Canvas -->
+        <main class="canvas-viewport" id="stream-viewer-container">
+            <!-- MJPEG Stream Player -->
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                <img id="main-frame-img" class="canvas-viewport__img" src="/api/video_feed" alt="Video Monitor Stream" />
+                <div style="position: absolute; bottom: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); font-size: 11px; font-weight: 600; color: #4ade80;">
+                     ● LIVE MONITORING ACTIVE
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidesheet (Ergonomic Risk Details) -->
+        <aside class="hud-sidesheet" id="hud-right-sidesheet" style="width: 380px; flex-shrink: 0; background: rgba(13, 16, 21, 0.85); border-left: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; z-index: 10; overflow: hidden;"
+               hx-get="/hud/right-sidesheet" hx-trigger="every 500ms" hx-swap="outerHTML">
+            <!-- Hydrated dynamically by HTMX -->
+            <div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin: auto;">
+                Memuat panel analisis risiko...
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<script>
+    // Event listener to reload list after file upload
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.target.id === 'upload-status' && evt.detail.xhr.status === 200) {
+            // Success upload, trigger select dropdown update and reload selector if possible
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+/* Fit-Between-Widgets Canvas Viewport Layout Styles */
+
+.canvas-viewport--fit-widgets {
+  padding-left: 316px;
+  padding-right: 316px;
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+
+.workspace-fullscreen--zen .canvas-viewport--fit-widgets {
+  padding: 0 !important;
+}

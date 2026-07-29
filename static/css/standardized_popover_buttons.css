@@ -1,0 +1,200 @@
+/* Standardized, compact glassmorphic styling overrides for the floating popover bar and its action buttons */
+
+.hud-popover {
+  border-radius: 12px !important;
+  padding: 6px 10px !important;
+  gap: 8px !important;
+}
+
+.hud-popover .hud-popover__btn,
+.hud-popover button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e5e7eb !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
+}
+
+.hud-popover .hud-popover__btn {
+  width: 28px !important;
+  padding: 0 !important;
+  position: relative !important;
+}
+
+.hud-popover__badge {
+  position: absolute !important;
+  top: -6px !important;
+  right: -6px !important;
+  background: #a855f7 !important;
+  color: #ffffff !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  padding: 1px 4px !important;
+  border-radius: 8px !important;
+  line-height: 1 !important;
+  min-width: 10px !important;
+  text-align: center !important;
+  box-shadow: 0 0 4px rgba(168, 85, 247, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  pointer-events: none !important;
+}
+
+
+.hud-popover .hud-popover__btn:hover,
+.hud-popover button:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.hud-popover .hud-popover__btn:active,
+.hud-popover button:active {
+  transform: translateY(0) !important;
+}
+
+/* Specific colors for Popover actions */
+.hud-popover #btn-popover-segment {
+  background: rgba(14, 165, 233, 0.08) !important;
+  border-color: rgba(14, 165, 233, 0.25) !important;
+  color: #38bdf8 !important;
+}
+.hud-popover #btn-popover-segment:hover {
+  background: rgba(14, 165, 233, 0.18) !important;
+  border-color: #0ea5e9 !important;
+  color: #fff !important;
+}
+
+.hud-popover #btn-popover-classify-this {
+  background: rgba(59, 130, 246, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+  color: #60a5fa !important;
+}
+.hud-popover #btn-popover-classify-this:hover {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: #3b82f6 !important;
+  color: #fff !important;
+}
+
+.hud-popover #btn-popover-crop-train {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.25) !important;
+  color: #c084fc !important;
+}
+.hud-popover #btn-popover-crop-train:hover {
+  background: rgba(139, 92, 246, 0.18) !important;
+  border-color: #8b5cf6 !important;
+  color: #fff !important;
+}
+
+.hud-popover #btn-popover-delete {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #f87171 !important;
+}
+.hud-popover #btn-popover-delete:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+}
+
+/* Close action style override */
+.hud-popover .hud-popover__close {
+  background: none !important;
+  border: none !important;
+  color: #fca5a5 !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  height: auto !important;
+  padding: 0 4px !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.hud-popover .hud-popover__close:hover {
+  color: #ef4444 !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: scale(1.1) !important;
+}
+
+/* Popover label chip buttons */
+.hud-popover__label-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #d1d5db !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.hud-popover__label-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+.hud-popover__label-btn--active {
+  background: rgba(14, 165, 233, 0.12) !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+  color: #38bdf8 !important;
+}
+.hud-popover__label-btn--active:hover {
+  background: rgba(14, 165, 233, 0.22) !important;
+  border-color: #0ea5e9 !important;
+  color: #fff !important;
+}
+
+/* Popover plus button style */
+.hud-popover__plus-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+  color: #9ca3af !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.hud-popover__plus-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+}
+
+.hud-popover #btn-popover-crop-train.hud-popover__btn--remove-crop {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #f87171 !important;
+}
+.hud-popover #btn-popover-crop-train.hud-popover__btn--remove-crop:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Worker Safety HUD - AI Ergonomics{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Unified HUD Stylesheet imports -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/hud_thumbnails.css">
+    <link rel="stylesheet" href="/static/css/hud_drawer.css">
+    <link rel="stylesheet" href="/static/css/hud_sidesheet.css">
+    <link rel="stylesheet" href="/static/css/hud_sidesheet_thumbs.css">
+    <link rel="stylesheet" href="/static/css/hud_stepper.css">
+    <link rel="stylesheet" href="/static/css/toast.css">
+    <link rel="stylesheet" href="/static/css/standardized_buttons.css">
+    <link rel="stylesheet" href="/static/css/standardized_buttons_sidesheet.css">
+    <link rel="stylesheet" href="/static/css/standardized_popover_buttons.css">
+    <link rel="stylesheet" href="/static/css/gpu_manager.css">
+    
+    <!-- HTMX CDN -->
+    <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+    
+    <style>
+        /* Custom overrides to match worker safety HUD and keep it extremely premium */
+        .workspace-fullscreen {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+            background-color: #0b0c10;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+        }
+        .canvas-viewport {
+            flex: 1;
+            position: relative;
+            background-color: #07080a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            height: 100%;
+        }
+        .canvas-viewport__img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        /* Custom styled card classes */
+        .hud-topbar__title {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+        .hud-badge {
+            background: rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: #38bdf8;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .hud-badge--bahaya {
+            background: rgba(239, 68, 68, 0.15) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            color: #f87171 !important;
+        }
+        .hud-badge--waspada {
+            background: rgba(234, 179, 8, 0.15) !important;
+            border: 1px solid rgba(234, 179, 8, 0.3) !important;
+            color: #facc15 !important;
+        }
+        .hud-badge--aman {
+            background: rgba(34, 197, 94, 0.15) !important;
+            border: 1px solid rgba(34, 197, 94, 0.3) !important;
+            color: #4ade80 !important;
+        }
+        /* Scroller custom style for modern dark appearance */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="workspace-body">
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,22 @@
+<div id="worker-roster-container" hx-get="/hud/left-drawer" hx-trigger="every 1s" hx-swap="outerHTML" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+    {% if not workers_data %}
+        <div style="padding: 15px; text-align: center; color: rgba(255,255,255,0.25); font-size: 11px; background: rgba(255,255,255,0.01); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);">
+            Menunggu deteksi pekerja...
+        </div>
+    {% else %}
+        {% for w in workers_data %}
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid {% if w.risk_level == 'BAHAYA' %}#ef4444{% elif w.risk_level == 'WASPADA' %}#eab308{% else %}#22c55e{% endif %}; border-radius: 6px; padding: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: {% if w.risk_level == 'BAHAYA' %}#ef4444{% elif w.risk_level == 'WASPADA' %}#eab308{% else %}#22c55e{% endif %};"></div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: bold; color: #fff;">Pekerja #{{ w.id }}</div>
+                        <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Trunk: {{ w.details.trunk_angle }}°</div>
+                    </div>
+                </div>
+                <div style="font-size: 9.5px; font-weight: bold; text-transform: uppercase; color: {% if w.risk_level == 'BAHAYA' %}#f87171{% elif w.risk_level == 'WASPADA' %}#facc15{% else %}#4ade80{% endif %};">
+                    {{ w.risk_level }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

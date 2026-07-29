@@ -1,0 +1,161 @@
+/* Compact, neutral-dark overrides for all buttons on the right side-sheet */
+
+.hud-sidesheet .hud-btn, 
+.hud-sidesheet .verify-btn {
+  padding: 4px 8px !important;
+  font-size: 0.72rem !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 3px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #d1d5db !important;
+}
+
+.hud-sidesheet .hud-btn:hover, 
+.hud-sidesheet .verify-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Default neutral state for all verification/propagation/span buttons in side-sheet */
+.hud-sidesheet .hud-btn--verify, .hud-sidesheet .verify-btn--verify,
+.hud-sidesheet .hud-btn--reject, .hud-sidesheet .verify-btn--reject,
+.hud-sidesheet .hud-btn--flag, .hud-sidesheet .verify-btn--flag,
+.hud-sidesheet .hud-btn--accent, .hud-sidesheet .hud-btn--purple,
+.hud-sidesheet .hud-btn--secondary {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #d1d5db !important;
+}
+
+/* Semantic hover & active overrides for side sheet buttons */
+.hud-sidesheet .hud-btn--verify:hover, .hud-sidesheet .verify-btn--verify:hover,
+.hud-sidesheet .hud-btn--verify.hud-btn--active, .hud-sidesheet .verify-btn--verify.hud-btn--active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border-color: #10b981 !important;
+  color: #34d399 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.1) !important;
+}
+
+.hud-sidesheet .hud-btn--reject:hover, .hud-sidesheet .verify-btn--reject:hover,
+.hud-sidesheet .hud-btn--reject.hud-btn--active, .hud-sidesheet .verify-btn--reject.hud-btn--active {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.1) !important;
+}
+
+.hud-sidesheet .hud-btn--flag:hover, .hud-sidesheet .verify-btn--flag:hover,
+.hud-sidesheet .hud-btn--flag.hud-btn--active, .hud-sidesheet .verify-btn--flag.hud-btn--active {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border-color: #f59e0b !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.1) !important;
+}
+
+.hud-sidesheet .hud-btn--accent:hover, .hud-sidesheet .hud-btn--accent.hud-btn--active {
+  background: rgba(99, 102, 241, 0.18) !important;
+  border-color: #6366f1 !important;
+  color: #a5b4fc !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.1) !important;
+}
+
+.hud-sidesheet .hud-btn--purple:hover, .hud-sidesheet .hud-btn--purple.hud-btn--active {
+  background: rgba(139, 92, 246, 0.18) !important;
+  border-color: #8b5cf6 !important;
+  color: #c084fc !important;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Mini buttons (Delete, Edit, Segment, Restore, Crop, Re-Classify) default to neutral */
+.hud-sidesheet .hud-btn--mini {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #9ca3af !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.hud-sidesheet .hud-btn--mini:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+
+/* Specific mini button hover styles */
+.hud-sidesheet .btn-det-edit:hover {
+  color: #60a5fa !important;
+  border-color: #60a5fa !important;
+  background: rgba(96, 165, 250, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-del:hover {
+  color: #f87171 !important;
+  border-color: #f87171 !important;
+  background: rgba(248, 113, 113, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-restore:hover {
+  color: #34d399 !important;
+  border-color: #34d399 !important;
+  background: rgba(52, 211, 153, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-toggle:hover {
+  color: #fbbf24 !important;
+  border-color: #fbbf24 !important;
+  background: rgba(251, 191, 36, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-crop:hover {
+  color: #c084fc !important;
+  border-color: #c084fc !important;
+  background: rgba(192, 132, 252, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-segment:hover {
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+}
+
+.hud-sidesheet .btn-det-classify:hover {
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Deleted visibility toggle button style (neutral until active) */
+.hud-sidesheet #btn-toggle-deleted {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f87171 !important;
+}
+
+.hud-sidesheet #btn-toggle-deleted:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.hud-sidesheet #btn-toggle-deleted.hud-btn--active {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.1) !important;
+}
+

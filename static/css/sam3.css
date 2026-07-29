@@ -1,0 +1,161 @@
+/* SAM3 Detection Stage CSS */
+
+.navbar__badge--sam3 {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+}
+
+.target-badge--sam3 {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.progress-box--sam3 {
+  border-left: 4px solid #8b5cf6;
+  background: rgba(139, 92, 246, 0.03);
+}
+
+.progress-box__percent--sam3 {
+  color: #8b5cf6;
+}
+
+.progress-bar-fill--sam3 {
+  background: linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.sam3-frame-counter {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--gray-600, #4b5563);
+}
+
+.photo-album-container--sam3 {
+  border-top: 2px solid rgba(139, 92, 246, 0.2);
+}
+
+.photo-album-header__icon--sam3 {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.photo-album-header__badge--sam3 {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+
+.photo-card--sam3 {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.photo-card--processed {
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.photo-card--processed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+}
+
+.photo-card__badge--success {
+  background: rgba(16, 185, 129, 0.9);
+  color: #ffffff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.photo-card__badge--pending {
+  background: rgba(107, 114, 128, 0.85);
+  color: #ffffff;
+}
+
+.photo-card--pending {
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+  background: rgba(17, 24, 39, 0.02);
+}
+
+.photo-card__frame-wrap--pending {
+  position: relative;
+}
+
+.photo-card__img--blur {
+  filter: blur(4px) opacity(0.5);
+}
+
+.pending-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+.pending-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.sam3-card__dets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.sam3-det-pill {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(17, 24, 39, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid #8b5cf6;
+  color: var(--gray-800, #1f2937);
+}
+
+.photo-card__json-btn--sam3 {
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+.photo-card__json-btn--sam3:hover {
+  text-decoration: underline;
+}
+
+.sam3-actions-footer {
+  margin-top: 1.5rem;
+}
+
+.sam3-complete-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  color: #065f46;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.spin-icon--lg {
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

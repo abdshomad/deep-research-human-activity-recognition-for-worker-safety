@@ -1,0 +1,5 @@
+<div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
+    <span class="hud-badge {% if overall_risk == 'BAHAYA' %}hud-badge--bahaya{% elif overall_risk == 'WASPADA' %}hud-badge--waspada{% else %}hud-badge--aman{% endif %}">
+        STATUS: {{ overall_risk }}
+    </span>
+</div>

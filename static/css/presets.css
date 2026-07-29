@@ -1,0 +1,152 @@
+/* ── Presets ── */
+.presets {
+  max-width: 100%;
+  padding: 2rem 1.5rem 3rem;
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 2rem;
+}
+
+.presets__header {
+  max-width: 1200px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.presets__title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  margin-bottom: 0.25rem;
+}
+
+.presets__subtitle {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+}
+
+.presets__tip {
+  font-size: 0.75rem;
+  color: var(--purple-600);
+  font-weight: 500;
+}
+
+.presets__track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: hidden;
+  padding: 0.5rem 0 1rem;
+  max-width: 100%;
+  margin: 0 auto;
+  cursor: grab;
+  user-select: none;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.presets__track:active {
+  cursor: grabbing;
+}
+
+/* ── Preset Card ── */
+.preset-card {
+  flex: 0 0 200px;
+  scroll-snap-align: start;
+}
+
+.preset-card__button {
+  display: flex;
+  flex-direction: column;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.preset-card__button:hover .preset-card__thumb {
+  transform: scale(1.03);
+}
+
+.preset-card__thumb-btn {
+  position: relative;
+  border: none;
+  padding: 0;
+  background: none;
+  border-radius: var(--radius);
+  overflow: hidden;
+  width: 100%;
+}
+
+.preset-card__thumb {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s;
+}
+
+.preset-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.preset-card__body {
+  padding: 0.625rem 0.25rem 0;
+}
+
+.preset-card__name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray-800);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+}
+
+.preset-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.375rem;
+}
+
+.preset-card__duration {
+  font-size: 0.6875rem;
+  color: var(--gray-400);
+}
+
+.preset-card__run {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.preset-card__form:hover .preset-card__run {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .presets__tip {
+    display: none;
+  }
+}

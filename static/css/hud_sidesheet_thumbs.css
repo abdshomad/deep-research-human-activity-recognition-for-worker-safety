@@ -1,0 +1,126 @@
+/* Styling for detected object thumbnails in the right side-sheet */
+
+.det-item {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.det-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.det-item__thumb-wrapper {
+  flex-shrink: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Sizing Modifiers */
+.detections-list--small .det-item__thumb-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
+.detections-list--medium .det-item__thumb-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+}
+.detections-list--big .det-item__thumb-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+}
+
+/* Padding & Gap adjustments */
+.detections-list--small .det-item {
+  padding: 6px !important;
+  gap: 8px !important;
+}
+.detections-list--medium .det-item {
+  padding: 8px !important;
+  gap: 12px !important;
+}
+.detections-list--big .det-item {
+  padding: 10px !important;
+  gap: 14px !important;
+}
+
+/* Sizing Button hover and active states */
+.det-size-btn:hover {
+  color: #f3f4f6 !important;
+}
+.det-size-btn--active {
+  color: #38bdf8 !important;
+}
+
+
+.det-item__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.det-item__thumb-img:hover {
+  transform: scale(1.15);
+}
+
+.det-item__thumb-img--placeholder {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.det-item__details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0; /* Prevents text overflow */
+}
+
+.det-item__header {
+  margin-bottom: 0 !important;
+  align-items: center;
+}
+
+.det-item__label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.85rem;
+  max-width: 160px;
+}
+
+.det-item__actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Vector SVG canvas interactive hover state link */
+#canvas-svg-overlay rect.svg-hovered,
+#canvas-svg-overlay polygon.svg-hovered {
+  stroke: #38bdf8 !important;
+  stroke-width: 6 !important;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8)) !important;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+/* Hover glow state when canvas element is hovered */
+.det-item--hovered {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.3) !important;
+}

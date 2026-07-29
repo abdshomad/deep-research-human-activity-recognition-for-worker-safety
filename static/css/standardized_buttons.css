@@ -1,0 +1,346 @@
+/* Standardized premium button system for EZ Lab Lite Workspace */
+
+/* Unified hover transitions and focus states for all HUD buttons */
+.hud-btn, .verify-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  outline: none;
+}
+
+/* Enhancing top HUD and main buttons */
+.hud-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+}
+.hud-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.hud-btn:active {
+  transform: translateY(0);
+}
+
+/* Verification buttons unification */
+.verify-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.verify-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.verify-btn:active {
+  transform: translateY(0);
+}
+
+/* Core semantic colors mapping to both .hud-btn and .verify-btn */
+.verify-btn--verify, .hud-btn--verify {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #34d399 !important;
+}
+.verify-btn--verify:hover, .hud-btn--verify:hover {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+}
+.verify-btn--verify.hud-btn--active, .hud-btn--verify.hud-btn--active {
+  background: rgba(16, 185, 129, 0.4) !important;
+  border-color: #10b981 !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2) !important;
+}
+
+.verify-btn--reject, .hud-btn--reject {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #f87171 !important;
+}
+.verify-btn--reject:hover, .hud-btn--reject:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: #ef4444 !important;
+}
+.verify-btn--reject.hud-btn--active, .hud-btn--reject.hud-btn--active {
+  background: rgba(239, 68, 68, 0.4) !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.verify-btn--flag, .hud-btn--flag {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fbbf24 !important;
+}
+.verify-btn--flag:hover, .hud-btn--flag:hover {
+  background: rgba(245, 158, 11, 0.25) !important;
+  border-color: #f59e0b !important;
+}
+.verify-btn--flag.hud-btn--active, .hud-btn--flag.hud-btn--active {
+  background: rgba(245, 158, 11, 0.4) !important;
+  border-color: #f59e0b !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Bottombar adjustment for buttons */
+.hud-bottombar {
+  height: 48px !important;
+  padding: 0 12px !important;
+  gap: 8px !important;
+  border-radius: 24px !important;
+}
+
+/* Shortcut buttons in bottom dock */
+.hud-btn--shortcut {
+  height: 32px !important;
+  padding: 0 10px !important;
+  font-size: 0.75rem !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #d1d5db !important;
+  gap: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+.hud-btn--shortcut:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+.hud-btn--shortcut kbd {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #93c5fd !important; /* light blue for keys */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  font-weight: 700 !important;
+  font-family: monospace;
+  font-size: 0.65rem !important;
+  padding: 2px 5px !important;
+  border-radius: 4px !important;
+  display: inline-block;
+  line-height: 1.2;
+}
+.hud-btn--shortcut.hud-btn--active {
+  background: rgba(99, 102, 241, 0.25) !important;
+  border-color: #6366f1 !important;
+  color: #c7d2fe !important;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.15);
+}
+
+/* Button groups in bottom dock (for navigation and propagation) */
+.hud-btn-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 3px;
+  height: 32px;
+  box-sizing: border-box;
+  gap: 4px;
+}
+.hud-btn-group .hud-btn--shortcut-action {
+  height: 24px !important;
+  width: 24px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+}
+.hud-btn-group .hud-btn--shortcut-action:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+.hud-btn-group-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  padding: 0 6px;
+  white-space: nowrap;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.hud-btn-group-label kbd {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  font-weight: 700 !important;
+  font-family: monospace;
+  font-size: 0.65rem !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+}
+
+/* Premium purple button class */
+.hud-btn--purple {
+  background: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  color: #c084fc !important;
+}
+.hud-btn--purple:hover {
+  background: rgba(139, 92, 246, 0.35) !important;
+  border-color: #a855f7 !important;
+  color: #fff !important;
+}
+
+/* Mini glassmorphic buttons for list items */
+.hud-btn--mini {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+.hud-btn--mini:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.hud-btn--mini:active {
+  transform: translateY(0);
+}
+
+/* Colors for specific mini buttons */
+.btn-det-edit {
+  color: #60a5fa !important;
+  border-color: rgba(96, 165, 250, 0.25) !important;
+  background: rgba(96, 165, 250, 0.08) !important;
+}
+.btn-det-edit:hover {
+  background: rgba(96, 165, 250, 0.18) !important;
+  border-color: #60a5fa !important;
+}
+
+.btn-det-del {
+  color: #f87171 !important;
+  border-color: rgba(248, 113, 113, 0.25) !important;
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+.btn-det-del:hover {
+  background: rgba(248, 113, 113, 0.18) !important;
+  border-color: #f87171 !important;
+}
+
+.btn-det-uncrop {
+  color: #f87171 !important;
+  border-color: rgba(248, 113, 113, 0.25) !important;
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+.btn-det-uncrop:hover {
+  background: rgba(248, 113, 113, 0.18) !important;
+  border-color: #f87171 !important;
+}
+
+.btn-det-restore {
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
+  background: rgba(52, 211, 153, 0.08) !important;
+}
+.btn-det-restore:hover {
+  background: rgba(52, 211, 153, 0.18) !important;
+  border-color: #34d399 !important;
+}
+
+.btn-det-toggle {
+  color: #fbbf24 !important;
+  border-color: rgba(251, 191, 36, 0.25) !important;
+  background: rgba(251, 191, 36, 0.08) !important;
+}
+.btn-det-toggle:hover {
+  background: rgba(251, 191, 36, 0.18) !important;
+  border-color: #fbbf24 !important;
+}
+.btn-det-toggle--hidden {
+  color: #9ca3af !important;
+  text-decoration: line-through !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.btn-det-crop {
+  color: #c084fc !important;
+  border-color: rgba(192, 132, 252, 0.25) !important;
+  background: rgba(192, 132, 252, 0.08) !important;
+}
+.btn-det-crop:hover {
+  background: rgba(192, 132, 252, 0.18) !important;
+  border-color: #c084fc !important;
+}
+
+.btn-det-segment {
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+}
+.btn-det-segment:hover {
+  background: rgba(56, 189, 248, 0.18) !important;
+  border-color: #38bdf8 !important;
+}
+
+.btn-det-classify {
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+}
+.btn-det-classify:hover {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Deleted toggle button style */
+#btn-toggle-deleted {
+  color: #f87171 !important;
+  border-color: rgba(248, 113, 113, 0.25) !important;
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+#btn-toggle-deleted:hover {
+  background: rgba(248, 113, 113, 0.18) !important;
+  border-color: #f87171 !important;
+}
+#btn-toggle-deleted.hud-btn--active {
+  background: rgba(248, 113, 113, 0.35) !important;
+  border-color: #f87171 !important;
+  color: #fff !important;
+}
+
+.badge-in-samples {
+  transition: all 0.2s ease !important;
+}
+.badge-in-samples:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
