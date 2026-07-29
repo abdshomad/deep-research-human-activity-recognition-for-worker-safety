@@ -34,6 +34,7 @@ class AppState:
         self.workers_data = []
         self.conf_threshold = 0.5
         self.is_running = True
+        self.latest_frame = None
 
 state = AppState()
 
@@ -103,9 +104,8 @@ def draw_skeleton(frame, keypoints, risk_level, worker_id, conf_threshold=0.5):
             
     return frame
 
-# MJPEG Stream generator function
-def generate_frames():
-    # Load model in generator thread
+def background_worker():
+    # Load model once in this thread
     model = YOLO("yolov8n-pose.pt")
     
     current_source = None
@@ -120,6 +120,7 @@ def generate_frames():
             current_source = src
             if cap is not None:
                 cap.release()
+                cap = None
             if current_source == "webcam":
                 cap = cv2.VideoCapture(0)
             else:
@@ -131,9 +132,10 @@ def generate_frames():
             cv2.putText(blank, "Menghubungkan ke kamera...", (120, 240), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
             _, buffer = cv2.imencode('.jpg', blank)
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
-            time.sleep(1)
+            with state.lock:
+                state.latest_frame = buffer.tobytes()
+                state.workers_data = []
+            time.sleep(0.5)
             continue
             
         ret, frame = cap.read()
@@ -148,9 +150,9 @@ def generate_frames():
             frame = cv2.flip(frame, 1)  # mirror webcam for intuition
             
         # Resize frame
-        h, w = frame.shape[:2]
+        h_f, w_f = frame.shape[:2]
         target_w = 640
-        target_h = int((target_w / w) * h)
+        target_h = int((target_w / w_f) * h_f)
         frame = cv2.resize(frame, (target_w, target_h))
         
         # Inference
@@ -175,6 +177,11 @@ def generate_frames():
                 
                 # Evaluate ergonomics
                 eval_res = evaluate_ergonomics(kp, conf_threshold=state.conf_threshold)
+                risk_lvl = eval_res.get("risk_level", "UNKNOWN")
+                
+                # Draw skeleton (Always draw, even if INSUFFICIENT_DATA - it will be gray)
+                frame = draw_skeleton(frame, kp, risk_lvl, worker_id, conf_threshold=state.conf_threshold)
+                
                 if eval_res["status"] == "SUCCESS":
                     temp_workers.append({
                         "id": worker_id,
@@ -182,26 +189,46 @@ def generate_frames():
                         "reasons": eval_res["reasons"],
                         "details": eval_res["details"]
                     })
-                    
-                    # Draw overlay skeleton
-                    frame = draw_skeleton(frame, kp, eval_res["risk_level"], worker_id, conf_threshold=state.conf_threshold)
+                else:
+                    # Provide gray skeleton feedback with reason: badan kurang terlihat penuh
+                    temp_workers.append({
+                        "id": worker_id,
+                        "risk_level": "KURANG DATA",
+                        "reasons": [eval_res.get("message", "Tunjukkan seluruh badan (bahu & pinggul)")],
+                        "details": {
+                            "trunk_angle": 0.0,
+                            "knee_angle": None,
+                            "twist_angle": 0.0,
+                            "shoulder_tilt": 0.0,
+                            "wrist_hip_dist_normalized": 0.0
+                        }
+                    })
                     
         # Update global state
-        with state.lock:
-            state.workers_data = temp_workers
-            
-        # Encode frame to JPEG
         _, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
         
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-        
-        # Regulate processing rate
-        time.sleep(0.01)
+        with state.lock:
+            state.latest_frame = frame_bytes
+            state.workers_data = temp_workers
+            
+        # Limit rate
+        time.sleep(0.03)
         
     if cap is not None:
         cap.release()
+
+# MJPEG Stream generator function
+def generate_frames():
+    last_frame = None
+    while state.is_running:
+        with state.lock:
+            frame = state.latest_frame
+        if frame is not None and frame != last_frame:
+            last_frame = frame
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        time.sleep(0.03)
 
 import torch
 
@@ -335,6 +362,11 @@ async def get_overall_badge(request: Request):
         name="partials/overall_badge.html",
         context={"overall_risk": overall}
     )
+
+@app.on_event("startup")
+def startup_event():
+    # Start the background frame capture & processing worker thread
+    threading.Thread(target=background_worker, daemon=True).start()
 
 @app.on_event("shutdown")
 def shutdown_event():

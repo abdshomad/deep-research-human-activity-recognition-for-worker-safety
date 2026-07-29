@@ -40,7 +40,7 @@
             <!-- Source Selector -->
             <div style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
                 <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4);">SUMBER:</span>
-                <select id="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
+                <select id="video-source-select" name="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
                         hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
                     <option value="webcam" {% if active_source == 'webcam' %}selected{% endif %}>Kamera Utama (Webcam)</option>
                     {% for src in sources %}
