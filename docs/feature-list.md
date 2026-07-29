@@ -1,4 +1,4 @@
-# 🛠️ Master Platform Feature Registry & Taksonomi Perilaku Berbahaya K3
+# 🛠️ Master Platform Feature Registry (Fitur Aktif & Berjalan)
 
 > **Project Name:** WorkerSafety HUD - Real-Time AI Ergonomics & Multi-Behavior Unsafe Act Detection System  
 > **Repository:** `caramengangkatyangbenar`  
@@ -8,13 +8,11 @@
 ---
 
 ## 📌 Overview
-Dokumen ini merupakan **Daftar Fitur Master** dan **Taksonomi Lengkap Perilaku Berbahaya (Unsafe Act)** yang dicatat berdasarkan implementasi nyata di repositori proyek serta riset lapangan pada `riset_unsafe_behavior_lapangan (1).md`.
+Dokumen ini mencatat seluruh **fitur yang telah 100% diimplementasikan dan berjalan aktif** pada sistem **WorkerSafety HUD**. Seluruh fitur di bawah ini dapat diuji dan dijalankan secara real-time pada aplikasi.
 
 ---
 
-## 1. 🚀 Fitur Baru, Perubahan UI & Kustomisasi Sistem
-
-Berikut adalah daftar seluruh fitur baru, perubahan antarmuka, dan perbaikan teknis yang telah diterapkan:
+## 1. 🚀 Fitur Sistem & Antarmuka (UI/UX & Hardware)
 
 ### 📱 1.1 DroidCam & Direct IP Camera Stream Connector (`URL`)
 - **Deskripsi:** Modul konektor stream IP Camera (MJPEG/HTTP) langsung di Left Drawer & Top HUD.
@@ -22,16 +20,16 @@ Berikut adalah daftar seluruh fitur baru, perubahan antarmuka, dan perbaikan tek
 - **Keunggulan:** Bebas kendala driver Virtual Camera Windows dan tidak membutuhkan kabel data.
 
 ### 🎥 1.2 Windows Multi-Camera Device Lock Release & DirectShow Switching
-- **Deskripsi:** Arsitektur *Background Capture Thread* berbasis `cv2.CAP_DSHOW` dengan mekanisme penundaan rilis memori (`time.sleep(0.5)`).
+- **Deskripsi:** Arsitektur *Background Capture Thread* berbasis `cv2.CAP_DSHOW` dengan penundaan rilis memori (`time.sleep(0.5)`).
 - **Kemampuan:** 
-  - Mencegah *device locking* (MSMF error) pada OS Windows saat perpindah antar-kamera.
+  - Mencegah *device locking* (MSMF error) pada OS Windows saat berpindah antar-kamera.
   - Pergantian instan antara Webcam Laptop (Index 0), DroidCam Camera (Index 1), dan Kamera Eksternal (Index 2).
   - Lampu webcam laptop otomatis padam secara instan saat sumber video dialihkan ke file rekaman (`.mp4`).
 
-### 🖼️ 1.3 Full-Cover Glassmorphic Video Viewport & Display Fix
+### 🖼️ 1.3 Full-Cover Glassmorphic Video Viewport & Display Scaling
 - **Deskripsi:** Pembaruan styling pada elemen viewport utama (`main#stream-viewer-container` & `img#main-frame-img`).
 - **Kemampuan:**
-  - Video otomatis terisi penuh 100% (*width: 100%; height: 100%; object-fit: cover;*) tanpa terpotong atau menyusut menjadi kotak kecil di tengah saat diganti via HTMX (`set_source`).
+  - Video otomatis terisi penuh 100% (*width: 100%; height: 100%; object-fit: cover;*) tanpa terpotong atau menyusut saat diganti via HTMX (`set_source`).
   - Dilengkapi bingkai glassmorphism modern (*border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(12px); border-radius: 16px*).
 
 ### ⌨️ 1.4 Fullscreen Mode & Interactive Shortcuts (`[F]`, `[Z]`, `[Shift+W]`, `[G]`)
@@ -55,26 +53,17 @@ Berikut adalah daftar seluruh fitur baru, perubahan antarmuka, dan perbaikan tek
 
 ---
 
-## 2. ⚠️ Taksonomi & Daftar Lengkap Perilaku Berbahaya (Unsafe Act)
+## 2. ⚠️ Engine Deteksi Multi-Perilaku Berbahaya (Aktif Berjalan)
 
-Berikut adalah matriks taksonomi lengkap perilaku & postur berbahaya di lapangan kerja berat (gudang, manufaktur, konstruksi) sesuai dokumen riset `riset_unsafe_behavior_lapangan (1).md` beserta status implementasinya dalam sistem:
+Berikut adalah daftar 5 modul bahaya yang **telah aktif berjalan** pada engine pendeteksi (`app/services/detector.py` & `src/ergonomics.py`):
 
-| No | Kategori Perilaku Berbahaya | Contoh Postur / Perilaku Spesifik | Metode Computer Vision | Status Implementasi |
-|---|---|---|---|:---:|
-| 1 | **Unsafe Lifting Ergonomics** | Mengangkat dengan membungkuk (*stoop lift*), fleksi torso $>20^\circ$, pilinan pinggang (*twisting* $>15^\circ$), overreaching | YOLOv8-Pose + REBA Biomechanics Engine (`src/ergonomics.py`) | 🟢 **Aktif (Live)** |
-| 2 | **Berlari / Gerakan Tergesa (Running)** | Berlari di lorong kerja, tergesa-gesa dekat kendaraan | Centroid Velocity Tracking antar-frame | 🟢 **Aktif (Live)** |
-| 3 | **Distraksi / Penggunaan Gadget** | Menggunakan HP saat bekerja, menatap ke bawah sambil berjalan | Wrist-to-Face Proximity + Head Pitch Angle | 🟢 **Aktif (Live)** |
-| 4 | **Memasuki Zona Terlarang** | Memasuki area mesin aktif, lintasan forklift, atau area bahaya | Virtual Geofencing (Foot-in-Polygon Check) | 🟢 **Aktif (Live)** |
-| 5 | **Postur Statis Janggal** | Menahan posisi bungkuk/jongkok dalam waktu lama tanpa jeda | Cumulative Posture Timer ($>10\text{s}$) | 🟢 **Aktif (Live)** |
-| 6 | **Ketidakpatuhan APD (PPE)** | Tidak memakai helm, rompi keselamatan (*safety vest*), sepatu safety | Object Detection (YOLOv8 PPE model) + Person BBox Mapping | 🟡 *Fase Penggantian Model* |
-| 7 | **Interaksi Berisiko Forklift** | Berjalan terlalu dekat forklift, berada di titik buta (*blind spot*) | Bounding Box Proximity + Trajectory Prediction | 🟡 *Fase Penggantian Model* |
-| 8 | **Bekerja di Ketinggian** | Naik ke rak/tangga tanpa harness, tanpa 3 titik kontak | Harness/Lanyard Object Detection + Height Estimation | 🟡 *Fase Penggantian Model* |
-| 9 | **Merokok di Area Terlarang** | Merokok di dekat bahan mudah terbakar/fuel storage | Small Object Detection (YOLO Small-Object) + Smoke Filter | 🟡 *Fase Penggantian Model* |
-| 10 | **Kelelahan & Microsleep** | Mengantuk saat mengoperasikan alat berat, kepala mengangguk | Facial Landmark EAR (Eye Aspect Ratio), PERCLOS, MAR | 🟡 *Fase Penggantian Model* |
-| 11 | **Horseplay / Bercanda Berbahaya** | Saling dorong, bergulat, berkendara ugal-ugalan | Anomaly Action Recognition (Skeleton-based) | ⚪ *Fase Lanjutan* |
-| 12 | **Housekeeping Berbahaya** | Barang menghalangi jalur evakuasi/APAR, menumpuk berlebih | Area Object Detection + Evacuation Path Checking | ⚪ *Fase Lanjutan* |
-| 13 | **Ketidakpatuhan LOTO** | Bekerja pada mesin aktif tanpa mengunci sumber energi | Vision + IoT Machine Sensor Status | ⚪ *Fase Lanjutan* |
-| 14 | **Overcrowding / Kerumunan** | Kepadatan berlebih pekerja di satu titik berbahaya | People Counting & Density Estimation | ⚪ *Fase Lanjutan* |
+| No | Modul Bahaya | Cara Kerja Algoritma | Indikator Visual & Alert |
+|---|---|---|---|
+| 1 | **🏋️ Unsafe Lifting Ergonomics** | Perhitungan sudut REBA (Punggung membungkuk, tekukan lutut, twist pinggang, jarak beban) | Kerangka Merah/Kuning + Alert Stoop Lift / Bend |
+| 2 | **🏃 Berlari di Area Kerja** | Memantau kecepatan gerakan titik pusat (*centroid velocity tracking*) per-ID pekerja antar-frame | Label `[BERLARI DI AREA KERJA]` + Speed `px/s` |
+| 3 | **📱 Distraksi / Penggunaan Gadget** | Mengukur jarak tangan ke wajah (*wrist-to-face proximity*) dipadu sudut kepala menunduk | Alert `📱 Distraksi: Menggunakan HP / Tangan di Dekat Wajah` |
+| 4 | **⛔ Memasuki Zona Terlarang** | Overlapping poligon area bahaya virtual (*virtual geofencing polygon*) dengan koordinat kaki pekerja | Overlay Poligon Merah + Label `[ZONA TERLARANG]` |
+| 5 | **⏳ Postur Statis Berkelanjutan** | Pelacakan durasi kumulatif posisi bungkuk/jongkok ($>10\text{ detik}$) | Alert `Postur bungkuk berkelanjutan (>10 detik)` |
 
 ---
 
