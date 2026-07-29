@@ -175,7 +175,7 @@ def background_worker():
             frame = cv2.flip(frame, 1)
             
         h_f, w_f = frame.shape[:2]
-        target_w = 640
+        target_w = 960
         target_h = int((target_w / w_f) * h_f)
         frame = cv2.resize(frame, (target_w, target_h))
         
