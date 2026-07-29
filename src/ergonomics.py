@@ -203,8 +203,8 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
         
     is_stoop_lift = (trunk_angle > 25) and (avg_knee_angle > 145)
     
-    # Evaluate Phone Distraction
-    is_distracted, hand_face_dist = evaluate_phone_distraction(kp, conf_threshold)
+    # Evaluate Hand-to-Face / Hand-to-Mouth (Phone Distraction / Smoking posture)
+    is_hand_to_face, hand_face_dist = evaluate_phone_distraction(kp, conf_threshold)
     
     risk_level = "AMAN"
     reasons = []
@@ -226,10 +226,10 @@ def evaluate_ergonomics(keypoints, conf_threshold=0.5):
         if twist_angle > 15:
             reasons.append("Tubuh terpelintir (twisting) ringan")
 
-    if is_distracted:
+    if is_hand_to_face:
         if risk_level == "AMAN":
             risk_level = "WASPADA"
-        reasons.append("📱 Distraksi: Menggunakan HP / Tangan di Dekat Wajah saat Bekerja")
+        reasons.append("📱🚬 Distraksi / Potensi Merokok: Tangan di Dekat Wajah & Mulut")
 
     return {
         "status": "SUCCESS",

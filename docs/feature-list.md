@@ -61,7 +61,7 @@ Berikut adalah daftar 5 modul bahaya yang **telah aktif berjalan** pada engine p
 |---|---|---|---|
 | 1 | **🏋️ Unsafe Lifting Ergonomics** | Perhitungan sudut REBA (Punggung membungkuk, tekukan lutut, twist pinggang, jarak beban) | Kerangka Merah/Kuning + Alert Stoop Lift / Bend |
 | 2 | **🏃 Berlari di Area Kerja** | Memantau kecepatan gerakan titik pusat (*centroid velocity tracking*) per-ID pekerja antar-frame | Label `[BERLARI DI AREA KERJA]` + Speed `px/s` |
-| 3 | **📱 Distraksi / Penggunaan Gadget** | Mengukur jarak tangan ke wajah (*wrist-to-face proximity*) dipadu sudut kepala menunduk | Alert `📱 Distraksi: Menggunakan HP / Tangan di Dekat Wajah` |
+| 3 | **📱🚬 Distraksi Gadget & Potensi Merokok** | Mengukur jarak tangan ke wajah/mulut (*wrist-to-face/mouth proximity*) dipadu sudut kepala menunduk | Alert `📱🚬 Distraksi / Potensi Merokok: Tangan di Dekat Wajah & Mulut` |
 | 4 | **⛔ Memasuki Zona Terlarang** | Overlapping poligon area bahaya virtual (*virtual geofencing polygon*) dengan koordinat kaki pekerja | Overlay Poligon Merah + Label `[ZONA TERLARANG]` |
 | 5 | **⏳ Postur Statis Berkelanjutan** | Pelacakan durasi kumulatif posisi bungkuk/jongkok ($>10\text{ detik}$) | Alert `Postur bungkuk berkelanjutan (>10 detik)` |
 
