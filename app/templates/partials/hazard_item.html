@@ -1,0 +1,12 @@
+<div class="sidesheet-card" style="border-left: 3px solid {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}; margin-bottom: 8px; animation: fadeIn 0.3s ease;">
+    <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;">
+        <strong style="color: {% if risk_level == 'BAHAYA' %}#ef4444{% else %}#eab308{% endif %}">⚠️ HAZARD DETECTED ({{ risk_level }})</strong>
+        <span style="color:rgba(255,255,255,0.4); font-size:10px;">{{ time_str }}</span>
+    </div>
+    <div style="font-size:11px; color:#f8fafc; font-weight:600; margin-bottom:4px;">Pekerja #{{ worker_id }}</div>
+    <ul style="margin:0; padding-left:14px; font-size:10px; color:rgba(255,255,255,0.75);">
+        {% for r in reasons %}
+        <li style="margin-bottom: 2px;">{{ r }}</li>
+        {% endfor %}
+    </ul>
+</div>

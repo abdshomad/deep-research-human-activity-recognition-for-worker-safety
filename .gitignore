@@ -5,3 +5,4 @@ venv/
 .streamlit/
 .ipynb_checkpoints/
 *.log
+pa somad/

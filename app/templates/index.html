@@ -7,58 +7,7 @@
     
     <!-- Floating Top HUD Header -->
     <header class="hud-topbar">
-        <div class="hud-topbar__left">
-            <a href="/" class="hud-topbar__brand">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #38bdf8;">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-                </svg>
-                <span class="hud-topbar__title" style="margin-left: 8px;">WorkerSafety HUD</span>
-            </a>
-            <span class="hud-badge" id="sam3-model-badge" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80;">YOLO: ACTIVE</span>
-            <span class="hud-badge" id="resnet-model-badge" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc;">REBA: ON</span>
-            
-            <button id="btn-toggle-gpu" class="hud-btn hud-btn--gpu" style="margin-left: 8px; font-size: 11px; padding: 2px 8px; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
-                    <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3M9 9h6v6H9z"/>
-                </svg>
-                GPU
-            </button>
-            <div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
-                <span class="hud-badge hud-badge--aman">STATUS: AMAN</span>
-            </div>
-        </div>
-
-        <div class="hud-topbar__center">
-            <div class="hud-counter">
-                <span id="hud-frame-counter" style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.7); text-transform: uppercase;">
-                    SISTEM MONITORING K3 REAL-TIME
-                </span>
-            </div>
-        </div>
-
-        <div class="hud-topbar__right">
-            <!-- Source Selector -->
-            <div style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
-                <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4);">SUMBER:</span>
-                <select id="video-source-select" name="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
-                        hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
-                    <option value="webcam" {% if active_source == 'webcam' %}selected{% endif %}>Kamera Utama (Webcam)</option>
-                    {% for src in sources %}
-                    <option value="{{ src }}" {% if active_source == src %}selected{% endif %}>{{ src }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <button id="btn-toggle-fit-widgets" class="hud-btn hud-btn--icon" title="Fit Canvas Mode [Shift+W]" style="margin-right: 4px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
-            </button>
-            <button id="btn-toggle-zen" class="hud-btn hud-btn--icon" title="Toggle Clean View / Zen Mode [Z]" style="margin-right: 4px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-            </button>
-            <button id="btn-open-help" class="hud-btn hud-btn--icon" title="Keyboard Shortcuts Help [?]">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </button>
-        </div>
+        {% include "partials/top_hud.html" %}
     </header>
 
     <!-- Collapsible Left Frame Drawer -->
@@ -90,9 +39,7 @@
             <!-- Active worker roster -->
             <div style="flex: 1; display: flex; flex-direction: column;">
                 <h5 style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.5px;">👥 ROSTER PEKERJA AKTIF</h5>
-                <div id="worker-roster-container" hx-get="/hud/left-drawer" hx-trigger="every 1s" hx-swap="outerHTML" style="flex: 1; overflow-y: auto;">
-                    {% include "partials/left_drawer.html" %}
-                </div>
+                {% include "partials/left_drawer.html" %}
             </div>
 
             <!-- Ergonomic Heuristics Rules card -->
@@ -115,46 +62,33 @@
         </div>
     </main>
 
-    <!-- Collapsible Right Verification & Annotation Side-Sheet -->
+    <!-- Collapsible Right Side-Sheet -->
     <aside id="right-sidesheet" class="hud-sidesheet">
         <button id="btn-toggle-right-sidesheet" class="hud-sidesheet__toggle" title="Toggle Side Panel">›</button>
         <div class="hud-sidesheet__header">
             <h3 class="hud-sidesheet__title">Analisis Ergonomi REBA</h3>
         </div>
         <div id="right-sidesheet-content" class="hud-sidesheet__content" hx-get="/hud/right-sidesheet" hx-trigger="every 500ms" hx-swap="innerHTML">
-            {% include "partials/sidesheet.html" %}
+            {% include "partials/right_sidesheet.html" %}
+        </div>
+        
+        <!-- Live Hazard alert logs triggered via Server-Sent Events (SSE) -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding: 12px; max-height: 250px; display: flex; flex-direction: column; background: rgba(0,0,0,0.15);">
+            <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #f87171; margin: 0 0 8px 0; letter-spacing: 0.5px;">
+                🚨 LIVE HAZARD ALERT LOGS
+            </h4>
+            <div id="hazard-alerts-log" hx-ext="sse" sse-connect="/api/sse/alerts" sse-swap="new-hazard" hx-swap="afterbegin" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                <!-- Real-time hazard cards pushed from backend are prepended here -->
+                <div id="no-alerts-placeholder" style="text-align: center; color: rgba(255,255,255,0.25); font-size: 10.5px; padding: 20px 0;">
+                    Belum ada hazard terdeteksi...
+                </div>
+            </div>
         </div>
     </aside>
 
     <!-- Bottom Shortcut Helper Bar -->
     <div class="hud-bottombar">
-        <div class="hud-btn-group" title="Navigasi Sumber Stream">
-            <button class="hud-btn--shortcut-action" onclick="alert('Playback control mock')">◀</button>
-            <button class="hud-btn--shortcut-action" onclick="alert('Playback control mock')">▶</button>
-            <span class="hud-btn-group-label" style="display:inline-flex; align-items:center; gap:4px;">
-                <kbd>PLAYBACK</kbd>
-            </span>
-        </div>
-
-        <button id="btn-bottom-select" class="hud-btn hud-btn--shortcut hud-btn--active" title="Mode Select [S]">
-            <kbd>S</kbd>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
-        </button>
-
-        <button id="btn-bottom-toggle-zen" class="hud-btn hud-btn--shortcut" title="Toggle Zen Mode [Z]">
-            <kbd>Z</kbd>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        </button>
-
-        <button id="btn-bottom-fit-image" class="hud-btn hud-btn--shortcut" title="Fit Canvas Mode [Shift+W]">
-            <kbd>⇧</kbd><kbd>W</kbd>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
-        </button>
-
-        <button id="btn-bottom-help" class="hud-btn hud-btn--shortcut" title="Keyboard Shortcuts Help [?]">
-            <kbd>?</kbd>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-left:2px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </button>
+        {% include "partials/bottom_hud.html" %}
     </div>
 
     <!-- GPU Management Panel Overlay -->
@@ -218,6 +152,14 @@
 </div>
 
 <script>
+    // Event listener to remove alerts placeholder on first SSE swap
+    document.body.addEventListener('htmx:sseBeforeMessageSwapped', function(evt) {
+        const placeholder = document.getElementById('no-alerts-placeholder');
+        if (placeholder) {
+            placeholder.remove();
+        }
+    });
+
     // Event listener to reload list after file upload
     document.body.addEventListener('htmx:afterRequest', function(evt) {
         if (evt.detail.target.id === 'upload-status' && evt.detail.xhr.status === 200) {

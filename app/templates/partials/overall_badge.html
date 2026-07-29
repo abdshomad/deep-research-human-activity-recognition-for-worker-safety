@@ -1,0 +1,7 @@
+{% if overall_risk == 'BAHAYA' %}
+<span class="hud-badge hud-badge--bahaya">STATUS: BAHAYA</span>
+{% elif overall_risk == 'WASPADA' %}
+<span class="hud-badge hud-badge--waspada">STATUS: WASPADA</span>
+{% else %}
+<span class="hud-badge hud-badge--aman">STATUS: AMAN</span>
+{% endif %}

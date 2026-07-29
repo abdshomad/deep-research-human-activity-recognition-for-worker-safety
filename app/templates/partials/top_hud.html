@@ -1,0 +1,51 @@
+<div class="hud-topbar__left">
+    <a href="/" class="hud-topbar__brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #38bdf8;">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span class="hud-topbar__title" style="margin-left: 8px;">WorkerSafety HUD</span>
+    </a>
+    <span class="hud-badge" id="sam3-model-badge" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80;">YOLO: ACTIVE</span>
+    <span class="hud-badge" id="resnet-model-badge" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc;">REBA: ON</span>
+    
+    <button id="btn-toggle-gpu" class="hud-btn hud-btn--gpu" style="margin-left: 8px; font-size: 11px; padding: 2px 8px; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+            <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3M9 9h6v6H9z"/>
+        </svg>
+        GPU
+    </button>
+    <div id="overall-risk-badge-container" style="margin-left: 8px;" hx-get="/hud/overall-badge" hx-trigger="every 1s" hx-swap="outerHTML">
+        {% include "partials/overall_badge.html" %}
+    </div>
+</div>
+
+<div class="hud-topbar__center">
+    <div class="hud-counter">
+        <span id="hud-frame-counter" style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.7); text-transform: uppercase;">
+            SISTEM MONITORING K3 REAL-TIME
+        </span>
+    </div>
+</div>
+
+<div class="hud-topbar__right">
+    <div style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
+        <span style="font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.4);">SUMBER:</span>
+        <select id="video-source-select" name="video-source-select" class="hud-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; outline: none; cursor: pointer;"
+                hx-post="/api/set_source" hx-trigger="change" hx-target="#stream-viewer-container" hx-swap="innerHTML">
+            <option value="webcam" {% if active_source == 'webcam' %}selected{% endif %}>Kamera Utama (Webcam)</option>
+            {% for src in sources %}
+            <option value="{{ src }}" {% if active_source == src %}selected{% endif %}>{{ src }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <button id="btn-toggle-fit-widgets" class="hud-btn hud-btn--icon" title="Fit Canvas Mode [Shift+W]" style="margin-right: 4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>
+    </button>
+    <button id="btn-toggle-zen" class="hud-btn hud-btn--icon" title="Toggle Clean View / Zen Mode [Z]" style="margin-right: 4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+    <button id="btn-open-help" class="hud-btn hud-btn--icon" title="Keyboard Shortcuts Help [?]">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
+</div>

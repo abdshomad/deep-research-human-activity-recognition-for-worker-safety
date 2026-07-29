@@ -1,0 +1,25 @@
+<div id="worker-roster-container" hx-get="/hud/left-drawer" hx-trigger="every 1s" hx-swap="outerHTML" style="flex: 1; overflow-y: auto;">
+    {% if not workers_data %}
+    <div style="padding: 10px; text-align: center; color: rgba(255,255,255,0.25); font-size: 11px;">
+        Tidak ada data pekerja aktif
+    </div>
+    {% else %}
+        {% for w in workers_data %}
+        <div class="thumb-group" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
+            <div>
+                <div style="font-size: 11px; font-weight: bold; color: #fff;">Pekerja #{{ w.id }}</div>
+                <div style="font-size: 9.5px; color: rgba(255, 255, 255, 0.45); margin-top: 2px;">
+                    {% if w.risk_level == 'KURANG DATA' %}
+                    Menunggu visibilitas tubuh...
+                    {% else %}
+                    Trunk: {{ w.details.trunk_angle }}° | Knee: {{ w.details.knee_angle if w.details.knee_angle is not none else 'N/A' }}°
+                    {% endif %}
+                </div>
+            </div>
+            <span class="hud-badge {% if w.risk_level == 'BAHAYA' %}hud-badge--bahaya{% elif w.risk_level == 'WASPADA' %}hud-badge--waspada{% elif w.risk_level == 'AMAN' %}hud-badge--aman{% else %}hud-badge--netral{% endif %}" style="font-size: 9px; padding: 2px 6px; border-radius: 4px;">
+                {{ w.risk_level }}
+            </span>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
