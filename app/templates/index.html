@@ -36,6 +36,17 @@
                 <div id="upload-status" style="font-size: 10px; margin-top: 6px;"></div>
             </div>
 
+            <!-- Direct IP Camera Connect (DroidCam) -->
+            <div>
+                <h5 style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.5px;">🌐 DROIDCAM IP CAMERA (URL)</h5>
+                <form hx-post="/api/set_source" hx-target="#stream-viewer-container" hx-swap="innerHTML" style="display: flex; flex-direction: column; gap: 6px;">
+                    <input type="text" name="video-source-select" placeholder="Contoh: http://192.168.1.15:4747/video" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #fff; outline: none;">
+                    <button type="submit" class="hud-btn" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; padding: 5px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; cursor: pointer; text-align: center;">
+                        Connect DroidCam IP Stream
+                    </button>
+                </form>
+            </div>
+
             <!-- Active worker roster -->
             <div style="flex: 1; display: flex; flex-direction: column;">
                 <h5 style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.5px;">👥 ROSTER PEKERJA AKTIF</h5>
