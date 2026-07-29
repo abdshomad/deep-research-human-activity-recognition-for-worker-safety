@@ -171,13 +171,17 @@
             <div class="gpu-section-title">Devices & Usage</div>
             <div class="gpu-card">
                 <div class="gpu-card-header">
-                    <span style="font-weight:bold; color:#c084fc;">NVIDIA GeForce RTX 4090</span>
-                    <span class="hud-badge">Active</span>
+                    <span style="font-weight:bold; color:#c084fc;">{{ gpu_info.name if gpu_info else "CPU" }}</span>
+                    <span class="hud-badge">{{ gpu_info.device_label if gpu_info else "Active" }}</span>
                 </div>
                 <div style="font-size:11px; color:rgba(255,255,255,0.7); line-height:1.6; margin-top: 6px;">
-                    • VRAM Occupied: 4.85 GB / 24.57 GB<br>
-                    • Inference Engine: PyTorch / CUDA<br>
-                    • Device Index: cuda:0
+                    {% if gpu_info and gpu_info.device_idx != 'cpu' %}
+                    • VRAM Terpakai: {{ gpu_info.occupied_mem }} / {{ gpu_info.total_mem }}<br>
+                    {% else %}
+                    • Memori RAM: Shared System RAM<br>
+                    {% endif %}
+                    • Inference Engine: {{ gpu_info.engine_label if gpu_info else "PyTorch / CPU" }}<br>
+                    • Device Index: {{ gpu_info.device_idx if gpu_info else "cpu" }}
                 </div>
             </div>
             
@@ -189,7 +193,7 @@
         </div>
         
         <div class="gpu-panel-footer">
-            <button class="gpu-btn-refresh" onclick="alert('GPU Status Refreshed!')">
+            <button class="gpu-btn-refresh" onclick="window.location.reload()">
                 Refresh Status
             </button>
         </div>

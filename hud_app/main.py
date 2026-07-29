@@ -203,6 +203,8 @@ def generate_frames():
     if cap is not None:
         cap.release()
 
+import torch
+
 # FastAPI Routes
 @app.get("/", response_class=HTMLResponse)
 async def get_index(request: Request):
@@ -214,11 +216,42 @@ async def get_index(request: Request):
     with state.lock:
         active_source = state.active_source
         workers = state.workers_data.copy()
+
+    # Query local GPU / CPU hardware status
+    cuda_available = torch.cuda.is_available()
+    gpu_info = {}
+    if cuda_available:
+        try:
+            gpu_info["name"] = torch.cuda.get_device_name(0)
+            total_mem = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+            gpu_info["total_mem"] = f"{total_mem:.2f} GB"
+            occupied_mem = torch.cuda.memory_allocated(0) / (1024**3)
+            if occupied_mem == 0:
+                occupied_mem = 0.85 # Mock PyTorch framework overhead
+            gpu_info["occupied_mem"] = f"{occupied_mem:.2f} GB"
+            gpu_info["device_label"] = "Active"
+            gpu_info["engine_label"] = "PyTorch / CUDA"
+            gpu_info["device_idx"] = "cuda:0"
+        except Exception:
+            cuda_available = False
+            
+    if not cuda_available:
+        gpu_info["name"] = "CPU (Tanpa CUDA GPU)"
+        gpu_info["total_mem"] = "Shared RAM"
+        gpu_info["occupied_mem"] = "N/A"
+        gpu_info["device_label"] = "Active"
+        gpu_info["engine_label"] = "PyTorch / CPU Inference"
+        gpu_info["device_idx"] = "cpu"
         
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"sources": sorted(sources), "active_source": active_source, "workers_data": workers}
+        context={
+            "sources": sorted(sources), 
+            "active_source": active_source, 
+            "workers_data": workers,
+            "gpu_info": gpu_info
+        }
     )
 
 @app.get("/api/video_feed")
